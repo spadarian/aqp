@@ -1,0 +1,302 @@
+---
+layout: post
+category: Tutorial
+title: "Getting, plotting, saving detailed soil series extent data (US-only)"
+tagline:
+date: 2016-11-16 00:00:00 
+tags: [Spatial data,Aggregation]
+authors: [Dylan Beaudette]
+versions:
+    aqp: 1.9
+    soilDB: 1.8-8
+---
+<style type="text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script src="data:application/x-javascript;base64,Cgp3aW5kb3cuYnVpbGRUYWJzZXRzID0gZnVuY3Rpb24odG9jSUQpIHsKCiAgLy8gYnVpbGQgYSB0YWJzZXQgZnJvbSBhIHNlY3Rpb24gZGl2IHdpdGggdGhlIC50YWJzZXQgY2xhc3MKICBmdW5jdGlvbiBidWlsZFRhYnNldCh0YWJzZXQpIHsKCiAgICAvLyBjaGVjayBmb3IgZmFkZSBhbmQgcGlsbHMgb3B0aW9ucwogICAgdmFyIGZhZGUgPSB0YWJzZXQuaGFzQ2xhc3MoInRhYnNldC1mYWRlIik7CiAgICB2YXIgcGlsbHMgPSB0YWJzZXQuaGFzQ2xhc3MoInRhYnNldC1waWxscyIpOwogICAgdmFyIG5hdkNsYXNzID0gcGlsbHMgPyAibmF2LXBpbGxzIiA6ICJuYXYtdGFicyI7CgogICAgLy8gZGV0ZXJtaW5lIHRoZSBoZWFkaW5nIGxldmVsIG9mIHRoZSB0YWJzZXQgYW5kIHRhYnMKICAgIHZhciBtYXRjaCA9IHRhYnNldC5hdHRyKCdjbGFzcycpLm1hdGNoKC9sZXZlbChcZCkgLyk7CiAgICBpZiAobWF0Y2ggPT09IG51bGwpCiAgICAgIHJldHVybjsKICAgIHZhciB0YWJzZXRMZXZlbCA9IE51bWJlcihtYXRjaFsxXSk7CiAgICB2YXIgdGFiTGV2ZWwgPSB0YWJzZXRMZXZlbCArIDE7CgogICAgLy8gZmluZCBhbGwgc3ViaGVhZGluZ3MgaW1tZWRpYXRlbHkgYmVsb3cKICAgIHZhciB0YWJzID0gdGFic2V0LmZpbmQoImRpdi5zZWN0aW9uLmxldmVsIiArIHRhYkxldmVsKTsKICAgIGlmICghdGFicy5sZW5ndGgpCiAgICAgIHJldHVybjsKCiAgICAvLyBjcmVhdGUgdGFibGlzdCBhbmQgdGFiLWNvbnRlbnQgZWxlbWVudHMKICAgIHZhciB0YWJMaXN0ID0gJCgnPHVsIGNsYXNzPSJuYXYgJyArIG5hdkNsYXNzICsgJyIgcm9sZT0idGFibGlzdCI+PC91bD4nKTsKICAgICQodGFic1swXSkuYmVmb3JlKHRhYkxpc3QpOwogICAgdmFyIHRhYkNvbnRlbnQgPSAkKCc8ZGl2IGNsYXNzPSJ0YWItY29udGVudCI+PC9kaXY+Jyk7CiAgICAkKHRhYnNbMF0pLmJlZm9yZSh0YWJDb250ZW50KTsKCiAgICAvLyBidWlsZCB0aGUgdGFic2V0CiAgICB0YWJzLmVhY2goZnVuY3Rpb24oaSkgewoKICAgICAgLy8gZ2V0IHRoZSB0YWIgZGl2CiAgICAgIHZhciB0YWIgPSAkKHRhYnNbaV0pOwoKICAgICAgLy8gZ2V0IHRoZSBpZCB0aGVuIHNhbml0aXplIGl0IGZvciB1c2Ugd2l0aCBib290c3RyYXAgdGFicwogICAgICB2YXIgaWQgPSB0YWIuYXR0cignaWQnKTsKCiAgICAgIC8vIHJlbW92ZSBhbnkgdGFibGUgb2YgY29udGVudHMgZW50cmllcyBhc3NvY2lhdGVkIHdpdGgKICAgICAgLy8gdGhpcyBJRCAoc2luY2Ugd2UnbGwgYmUgcmVtb3ZpbmcgdGhlIGhlYWRpbmcgZWxlbWVudCkKICAgICAgJCgiZGl2IyIgKyB0b2NJRCArICIgbGkgYVtocmVmPScjIiArIGlkICsgIiddIikucGFyZW50KCkucmVtb3ZlKCk7CgogICAgICAvLyBzYW5pdGl6ZSB0aGUgaWQgZm9yIHVzZSB3aXRoIGJvb3RzdHJhcCB0YWJzCiAgICAgIGlkID0gaWQucmVwbGFjZSgvWy5cLz8mISM8Pl0vZywgJycpLnJlcGxhY2UoL1xzL2csICdfJyk7CiAgICAgIHRhYi5hdHRyKCdpZCcsIGlkKTsKCiAgICAgIC8vIGdldCB0aGUgaGVhZGluZyBlbGVtZW50IHdpdGhpbiBpdCwgZ3JhYiBpdCdzIHRleHQsIHRoZW4gcmVtb3ZlIGl0CiAgICAgIHZhciBoZWFkaW5nID0gdGFiLmZpbmQoJ2gnICsgdGFiTGV2ZWwgKyAnOmZpcnN0Jyk7CiAgICAgIHZhciBoZWFkaW5nVGV4dCA9IGhlYWRpbmcuaHRtbCgpOwogICAgICBoZWFkaW5nLnJlbW92ZSgpOwoKICAgICAgLy8gYnVpbGQgYW5kIGFwcGVuZCB0aGUgdGFiIGxpc3QgaXRlbQogICAgICB2YXIgYSA9ICQoJzxhIHJvbGU9InRhYiIgZGF0YS10b2dnbGU9InRhYiI+JyArIGhlYWRpbmdUZXh0ICsgJzwvYT4nKTsKICAgICAgYS5hdHRyKCdocmVmJywgJyMnICsgaWQpOwogICAgICBhLmF0dHIoJ2FyaWEtY29udHJvbHMnLCBpZCk7CiAgICAgIHZhciBsaSA9ICQoJzxsaSByb2xlPSJwcmVzZW50YXRpb24iPjwvbGk+Jyk7CiAgICAgIGxpLmFwcGVuZChhKTsKICAgICAgaWYgKGkgPT09IDApCiAgICAgICAgbGkuYXR0cignY2xhc3MnLCAnYWN0aXZlJyk7CiAgICAgIHRhYkxpc3QuYXBwZW5kKGxpKTsKCiAgICAgIC8vIHNldCBpdCdzIGF0dHJpYnV0ZXMKICAgICAgdGFiLmF0dHIoJ3JvbGUnLCAndGFicGFuZWwnKTsKICAgICAgdGFiLmFkZENsYXNzKCd0YWItcGFuZScpOwogICAgICB0YWIuYWRkQ2xhc3MoJ3RhYmJlZC1wYW5lJyk7CiAgICAgIGlmIChmYWRlKQogICAgICAgIHRhYi5hZGRDbGFzcygnZmFkZScpOwogICAgICBpZiAoaSA9PT0gMCkgewogICAgICAgIHRhYi5hZGRDbGFzcygnYWN0aXZlJyk7CiAgICAgICAgaWYgKGZhZGUpCiAgICAgICAgICB0YWIuYWRkQ2xhc3MoJ2luJyk7CiAgICAgIH0KCiAgICAgIC8vIG1vdmUgaXQgaW50byB0aGUgdGFiIGNvbnRlbnQgZGl2CiAgICAgIHRhYi5kZXRhY2goKS5hcHBlbmRUbyh0YWJDb250ZW50KTsKICAgIH0pOwogIH0KCiAgLy8gY29udmVydCBzZWN0aW9uIGRpdnMgd2l0aCB0aGUgLnRhYnNldCBjbGFzcyB0byB0YWJzZXRzCiAgdmFyIHRhYnNldHMgPSAkKCJkaXYuc2VjdGlvbi50YWJzZXQiKTsKICB0YWJzZXRzLmVhY2goZnVuY3Rpb24oaSkgewogICAgYnVpbGRUYWJzZXQoJCh0YWJzZXRzW2ldKSk7CiAgfSk7Cn07Cgo="></script>
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+
+
+<div class="fluid-row" id="header">
+
+
+
+
+</div>
+
+
+<div id="investigating-soil-series-extent" class="section level1">
+<h1>Investigating Soil Series Extent</h1>
+<p>2016-11-16 <br>Dylan Beaudette</p>
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>This document demonstrates how to use the <a href="http://ncss-tech.github.io/AQP/soilDB/soilDB-Intro.html">soilDB</a> package to access detailed soil series extent maps via SoilWeb. These maps can be directly displayed in <strong>R</strong>, overlayed on Google Maps, or saved as local files (e.g. shapefiles). Data returned from SoilWeb represent bounding-boxes that enclose SSURGO polygons associated with map units containing the search criteria. Bounding-boxes are snapped to 0.01 degree precision in order to reduce processing time and file size. Note that these files are cached server-side after the first request, and the cache is purged when SoilWeb is periodically synced to the official data.</p>
+</div>
+<div id="installation" class="section level2">
+<h2>Installation</h2>
+<p>With a recent version of R, it should be possible to get all of the packages that this tutorial depends on via:</p>
+<pre class="r"><code># run these commands in the R console
+install.packages('soilDB', dep=TRUE) # stable version from CRAN + dependencies
+install.packages('dismo', dep=TRUE)
+install.packages('RColorBrewer', dep=TRUE)
+install.packages('maps', dep=TRUE)
+
+# you will need the latest version of soilDB
+devtools::install_github("ncss-tech/soilDB", dependencies=FALSE, upgrade_dependencies=FALSE)</code></pre>
+</div>
+<div id="examples" class="section level2">
+<h2>Examples</h2>
+<p>Illustrate the extent of SSURGO map units associated with the Amador series.</p>
+<pre class="r"><code># load required libraries
+library(soilDB)
+library(rgdal)
+library(dismo)
+library(maps)
+library(RColorBrewer)</code></pre>
+<p>Get series extent for the Amador series and plot on a Google Map.</p>
+<pre class="r"><code>seriesExtentAsGmap('amador')</code></pre>
+<p>Investigate the structure of soil series extent data.</p>
+<pre class="r"><code># the result is a SpatialPolygonsDataFrame object
+amador &lt;- seriesExtent('amador')
+
+# internal structure / class
+str(amador, 2)</code></pre>
+<pre><code>## Formal class 'SpatialPolygonsDataFrame' [package "sp"] with 5 slots
+##   ..@ data       :'data.frame':  1 obs. of  4 variables:
+##   ..@ polygons   :List of 1
+##   ..@ plotOrder  : int 1
+##   ..@ bbox       : num [1:2, 1:2] -121.2 37.2 -120.1 38.6
+##   .. ..- attr(*, "dimnames")=List of 2
+##   ..@ proj4string:Formal class 'CRS' [package "sp"] with 1 slot</code></pre>
+<pre class="r"><code># coordinate reference system in PROJ4 notation
+proj4string(amador)</code></pre>
+<pre><code>## [1] "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"</code></pre>
+<pre class="r"><code># check attribute table, details: http://casoilresource.lawr.ucdavis.edu/see/
+slot(amador, 'data')</code></pre>
+<pre><code>##        series acres gridsize   n
+## AMADOR AMADOR 23542    0.001 788</code></pre>
+<div id="compare-amador-pardee-and-san-joaquin-extents" class="section level3">
+<h3>Compare Amador, Pardee, and San Joaquin Extents</h3>
+<pre class="r"><code># define some nice colors
+cols &lt;- brewer.pal('Set1', n=3)
+
+# soil series of interest
+s &lt;- c('amador', 'pardee', 'san joaquin')
+
+# iterate over vector of soil series names
+# and store spatial extents in a list
+s.extent &lt;- lapply(s, seriesExtent, timeout=120)
+
+# combine into a single SpatialPolygonsDataFrame
+s.extent &lt;- do.call('rbind', s.extent)
+
+# plot the results:
+# set figure margins to 0
+par(mar=c(0,0,0,0))
+
+# plot select counties from California
+map(database='county', regions='california,calaveras|tuolumne|amador|san joaquin|stanislaus|merced|mariposa|sacramento')
+
+# add each soil series extent object
+for(i in 1:nrow(s.extent)) {
+  plot(s.extent[i, ], col=cols[i], add=TRUE)
+}
+
+# add a neatline around the map
+box()
+
+# make a simple legend
+legend('topright', col=cols, pch=15, legend=s.extent$series)</code></pre>
+<p><img src="data:image/png;base64,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" style="display: block; margin: auto;"></p>
+</div>
+<div id="exporting-series-extent-data" class="section level3">
+<h3>Exporting Series Extent Data</h3>
+<p>Save soil series extent data in multiple formats.</p>
+<pre class="r"><code># save using the coordinate reference system associated with this object (GCS WGS84)
+writeOGR(s.extent, dsn='.', layer='amador-pardee-san-joaquin-extent', driver='ESRI Shapefile')
+
+# save as KML for use in Google Earth
+writeOGR(s.extent, dsn='amador-pardee-san-joaquin-extent.kml', layer='amador-pardee-san-joaquin', driver='KML')
+
+# project to UTM zone 10 NAD83 and save
+s.extent.utm &lt;- spTransform(s.extent, CRS('+proj=utm +zone=10 +datum=NAD83'))
+writeOGR(s.extent.utm, dsn='.', layer='amador-pardee-san-joaquin-extent-utm', driver='ESRI Shapefile')</code></pre>
+</div>
+</div>
+<div id="boomer-soil-series-extent" class="section level2">
+<h2>Boomer Soil Series Extent</h2>
+<p>Lets investigate the spatial extent and MLRA overlap for the <a href="http://casoilresource.lawr.ucdavis.edu/sde/?series=boomer">Boomer</a> soil series. We will use the SoilWeb SEE data for an estimate of the spatial extent and <a href="http://ncss-tech.github.io/AQP/soilDB/SDA-tutorial.html">Soil Data Access</a> for MLRA overlap information.</p>
+<p>Get extent and make a simple map.</p>
+<pre class="r"><code>boomer &lt;- seriesExtent('boomer')
+par(mar=c(1,0,1,0))
+map(database='county', regions='california')
+plot(boomer, col=cols[2], border=cols[2], add=TRUE)
+box()
+title(main='Boomer Series Extent', line=1.25)
+mtext(side=1, text=as.character(Sys.Date()), line=0)</code></pre>
+<p><img src="data:image/png;base64,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" style="display: block; margin: auto;"></p>
+<p>Investigate MLRA overlap for the Boomer series via <a href="http://ncss-tech.github.io/AQP/soilDB/SDA-tutorial.html">SDA</a> (official SSURGO data). These results are based on the assumption that the "muaoverlap" table is correctly populated.</p>
+<pre class="r"><code>res &lt;- SDA_query("SELECT compname, areasymbol as mlra, areaname as mlra_name, count(compname) as n_components from laoverlap JOIN muaoverlap ON laoverlap.lareaovkey = muaoverlap.lareaovkey JOIN component ON muaoverlap.mukey = component.mukey WHERE compname = 'boomer' AND areatypename = 'MLRA' GROUP BY compname, areasymbol, areaname ORDER BY count(compname) DESC")
+kable(res, row.names = FALSE)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">compname</th>
+<th align="left">mlra</th>
+<th align="left">mlra_name</th>
+<th align="right">n_components</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Boomer</td>
+<td align="left">22A</td>
+<td align="left">Sierra Nevada Mountains</td>
+<td align="right">98</td>
+</tr>
+<tr class="even">
+<td align="left">Boomer</td>
+<td align="left">5</td>
+<td align="left">Siskiyou-Trinity Area</td>
+<td align="right">67</td>
+</tr>
+<tr class="odd">
+<td align="left">Boomer</td>
+<td align="left">18</td>
+<td align="left">Sierra Nevada Foothills</td>
+<td align="right">51</td>
+</tr>
+<tr class="even">
+<td align="left">Boomer</td>
+<td align="left">15</td>
+<td align="left">Central California Coast Range</td>
+<td align="right">38</td>
+</tr>
+<tr class="odd">
+<td align="left">Boomer</td>
+<td align="left">20</td>
+<td align="left">Southern California Mountains</td>
+<td align="right">15</td>
+</tr>
+<tr class="even">
+<td align="left">Boomer</td>
+<td align="left">22B</td>
+<td align="left">Southern Cascade Mountains</td>
+<td align="right">14</td>
+</tr>
+<tr class="odd">
+<td align="left">Boomer</td>
+<td align="left">14</td>
+<td align="left">Central California Coastal Valleys</td>
+<td align="right">14</td>
+</tr>
+<tr class="even">
+<td align="left">Boomer</td>
+<td align="left">4B</td>
+<td align="left">Coastal Redwood Belt</td>
+<td align="right">11</td>
+</tr>
+<tr class="odd">
+<td align="left">Boomer</td>
+<td align="left">17</td>
+<td align="left">Sacramento and San Joaquin Valleys</td>
+<td align="right">10</td>
+</tr>
+<tr class="even">
+<td align="left">Boomer</td>
+<td align="left">21</td>
+<td align="left">Klamath and Shasta Valleys and Basins</td>
+<td align="right">8</td>
+</tr>
+<tr class="odd">
+<td align="left">Boomer</td>
+<td align="left">31</td>
+<td align="left">Lower Colorado Desert</td>
+<td align="right">2</td>
+</tr>
+</tbody>
+</table>
+<p>That seems strange, which map units are in MLRA 31?</p>
+<pre class="r"><code>res &lt;- SDA_query("SELECT component.mukey, muname, compname, comppct_r from laoverlap JOIN muaoverlap ON laoverlap.lareaovkey = muaoverlap.lareaovkey JOIN mapunit ON muaoverlap.mukey = mapunit.mukey JOIN component ON muaoverlap.mukey = component.mukey WHERE compname = 'boomer' AND areatypename = 'MLRA' AND areasymbol = '31'")
+kable(res, row.names = FALSE)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="right">mukey</th>
+<th align="left">muname</th>
+<th align="left">compname</th>
+<th align="right">comppct_r</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">660462</td>
+<td align="left">Hotaw-Crouch-Boomer (s1015)</td>
+<td align="left">Boomer</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="right">660462</td>
+<td align="left">Hotaw-Crouch-Boomer (s1015)</td>
+<td align="left">Boomer</td>
+<td align="right">15</td>
+</tr>
+</tbody>
+</table>
+<p>Save extent for Boomer series as shapefile (GCS/WGS84).</p>
+<pre class="r"><code>writeOGR(boomer, dsn='.', layer='boomer-extent', driver='ESRI Shapefile')</code></pre>
+<hr>
+<p>This document is based on <code>aqp</code> version 1.9.15 and <code>soilDB</code> version 1.8-8.</p>
+</div>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+$(document).ready(function () {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+});
+
+
+</script>
+
+

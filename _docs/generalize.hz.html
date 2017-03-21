@@ -1,0 +1,75 @@
+---
+layout: doc
+title: "Generalize Horizon Names — generalize.hz"
+aqp_version: 1.10-1
+date: 2017-03-20 17:34:41 
+scripts: [jquery.sticky-kit.min.js, pkgdown.js]
+---
+
+<div class="row">
+  <div class="col-md-9 contents">
+    <div class="page-header">
+    <h1>Generalize Horizon Names</h1>
+    </div>
+
+    
+    <p>Generalize a vector of horizon names, based on new classes, and REGEX patterns.</p>
+    
+
+    <pre><span class="fu">generalize.hz</span>(<span class="no">x</span>, <span class="no">new</span>, <span class="no">pat</span>, <span class="no">non.matching.code</span>, <span class="no">hzdepm</span>)</pre>
+    
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
+    <dl class="dl-horizontal">
+      <dt>x</dt>
+      <dd>a character vector of horizon names</dd>
+      <dt>new</dt>
+      <dd>a character vector of new horizon classes</dd>
+      <dt>pat</dt>
+      <dd>a character vector of REGEX, same length as <code>x</code></dd>
+      <dt>non.matching.code</dt>
+      <dd>text used to describe any horizon not matching any item in <code>pat</code></dd>
+      <dt>hzdepm</dt>
+      <dd> a numeric vector of middle horizon depths</dd>
+    </dl>
+    
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>factor of the same length as <code>x</code></p>
+    
+    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
+
+    <p>http://casoilresource.lawr.ucdavis.edu/</p>
+    
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><span class="fu">data</span>(<span class="no">sp1</span>)
+
+<span class="co"># check original distribution of hz designations</span>
+<span class="fu">table</span>(<span class="no">sp1</span>$<span class="no">name</span>)
+
+<span class="co"># generalize</span>
+<span class="no">sp1</span>$<span class="no">genhz</span> <span class="kw">&lt;-</span> <span class="fu">generalize.hz</span>(<span class="no">sp1</span>$<span class="no">name</span>,
+<span class="kw">new</span><span class="kw">=</span><span class="fu">c</span>(<span class="st">'O'</span>,<span class="st">'A'</span>,<span class="st">'B'</span>,<span class="st">'C'</span>,<span class="st">'R'</span>),
+<span class="kw">pat</span><span class="kw">=</span><span class="fu">c</span>(<span class="st">'O'</span>, <span class="st">'^A'</span>,<span class="st">'^B'</span>,<span class="st">'C'</span>,<span class="st">'R'</span>))
+
+<span class="co"># see how we did / what we missed</span>
+<span class="fu">table</span>(<span class="no">sp1</span>$<span class="no">genhz</span>, <span class="no">sp1</span>$<span class="no">name</span>)</pre>
+  </div>
+  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+    <h2>Contents</h2>
+    <ul class="nav nav-pills nav-stacked">
+      <li><a href="#arguments">Arguments</a></li>
+      
+      <li><a href="#value">Value</a></li>
+
+      <li><a href="#references">References</a></li>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
+
+    <h2>Author</h2>
+    Dylan E. Beaudette
+  </div>
+</div>
+
+      

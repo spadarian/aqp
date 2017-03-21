@@ -1,0 +1,70 @@
+---
+layout: doc
+title: "Munsell to sRGB Lookup Table for Common Soil Colors — munsell"
+aqp_version: 1.10-1
+date: 2017-03-20 17:34:41 
+scripts: [jquery.sticky-kit.min.js, pkgdown.js]
+---
+
+<div class="row">
+  <div class="col-md-9 contents">
+    <div class="page-header">
+    <h1>Munsell to sRGB Lookup Table for Common Soil Colors</h1>
+    </div>
+
+    
+    <p>A lookup table of interpolated Munsell color chips for common soil colors.</p>
+    
+
+    <pre><span class="fu">data</span>(<span class="no">munsell</span>)</pre>
+        
+    <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
+
+    <p>A data frame with 8825 observations on the following 6 variables.
+  </p><dl class="dl-horizontal">
+    <dt><code>hue</code></dt><dd>Munsell Hue, upper case</dd>
+    <dt><code>value</code></dt><dd>Munsell Value</dd>
+    <dt><code>chroma</code></dt><dd>Munsell Chroma</dd>
+    <dt><code>r</code></dt><dd>sRGB "red" value (0-1)</dd>
+    <dt><code>g</code></dt><dd>sRGB "green" value (0-1)</dd>
+    <dt><code>b</code></dt><dd>sRGB "blue" value (0-1)</dd>
+  </dl>
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>See <code>munsell2rgb</code> for conversion examples. Note that this table does not currently have entires for values of 2.5--common in most soil color books. These chips should be added in the next major release of aqp.</p>
+    
+    <h2 class="hasAnchor" id="source"><a class="anchor" href="#source"></a>Source</h2>
+
+    <p>Color chip XYZ values: http://www.cis.rit.edu/mcsl/online/munsell.php</p>
+    
+    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
+
+    <p></p><dl class="dl-horizontal">
+		<dt>http://www.brucelindbloom.com/index.html?ColorCalcHelp.html</dt><dd>Color conversion equations</dd>
+		<dt>http://dx.doi.org/10.1016/j.cageo.2012.10.020</dt><dd>Methods used to generate this table</dd>
+	</dl>
+    
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><span class="fu">data</span>(<span class="no">munsell</span>)</pre>
+  </div>
+  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+    <h2>Contents</h2>
+    <ul class="nav nav-pills nav-stacked">
+      
+      <li><a href="#format">Format</a></li>
+
+      <li><a href="#details">Details</a></li>
+
+      <li><a href="#source">Source</a></li>
+
+      <li><a href="#references">References</a></li>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
+
+  </div>
+</div>
+
+      

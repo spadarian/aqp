@@ -1,0 +1,128 @@
+---
+layout: doc
+title: "Add Depth Brackets — addBracket"
+aqp_version: 1.10-1
+date: 2017-03-20 17:34:41 
+scripts: [jquery.sticky-kit.min.js, pkgdown.js]
+---
+
+<div class="row">
+  <div class="col-md-9 contents">
+    <div class="page-header">
+    <h1>Add Depth Brackets</h1>
+    </div>
+
+
+    <p>Add depth-wise brackets to an existing plot of a SoilProfileCollection object.</p>
+
+
+    <pre><span class="fu">addBracket</span>(<span class="no">top</span>, <span class="kw">bottom</span><span class="kw">=</span><span class="kw">NULL</span>, <span class="kw">idx</span><span class="kw">=</span><span class="kw">NULL</span>, <span class="kw">label</span><span class="kw">=</span><span class="kw">NULL</span>, <span class="kw">label.cex</span><span class="kw">=</span><span class="fl">0.75</span>,
+<span class="kw">tick.length</span> <span class="kw">=</span> <span class="fl">0.05</span>, <span class="kw">arrow.length</span> <span class="kw">=</span> <span class="fl">0.05</span>, <span class="kw">offset</span> <span class="kw">=</span> -<span class="fl">0.3</span>,
+<span class="kw">missing.bottom.depth</span> <span class="kw">=</span> <span class="fl">25</span>,
+<span class="no">...</span>)</pre>
+
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
+    <dl class="dl-horizontal">
+      <dt>top</dt>
+      <dd>numeric vector of bracket top depths</dd>
+      <dt>bottom</dt>
+      <dd>numeric vector of bracket bottom depths</dd>
+      <dt>idx</dt>
+      <dd>optional integer index, associating bracket with profile</dd>
+      <dt>label</dt>
+      <dd>optional vector of labels for brackets</dd>
+      <dt>label.cex</dt>
+      <dd>scaling factor for label font</dd>
+      <dt>tick.length</dt>
+      <dd>length of bracket "tick" mark</dd>
+      <dt>arrow.length</dt>
+      <dd>length of arrowhead</dd>
+      <dt>offset</dt>
+      <dd>numeric, length of left-hand offset from each profile</dd>
+      <dt>missing.bottom.depth</dt>
+      <dd>distance (in depth units) to extend brackets that are missing a lower depth</dd>
+      <dt>&#8230;</dt>
+      <dd>further arguments passed on to <code>segments</code> or <code>arrows</code></dd>
+    </dl>
+
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>The optional argument <code>idx</code> can be used to manually specify which profile a given bracket will be associated with. When <code>idx</code> is NULL, an integer sequence associated with plotting order (via <code>plotSPC</code>) is used. See examples below.</p>
+
+    <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
+
+    <p>This is a `low-level` plotting function: you must first plot a <code>SoilProfileCollection</code> object before using this function.</p>
+
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <p><code><a href="SoilProfileCollection-plotting-methods.html">plotSPC</a></code></p>
+
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><span class="co"># sample data</span>
+<span class="fu">data</span>(<span class="no">sp1</span>)
+
+<span class="co"># add color vector</span>
+<span class="no">sp1</span>$<span class="no">soil_color</span> <span class="kw">&lt;-</span> <span class="fu">with</span>(<span class="no">sp1</span>, <span class="fu"><a href="munsell2rgb.html">munsell2rgb</a></span>(<span class="no">hue</span>, <span class="no">value</span>, <span class="no">chroma</span>))
+
+<span class="co"># promote to SoilProfileCollection</span>
+<span class="fu">depths</span>(<span class="no">sp1</span>) <span class="kw">&lt;-</span> <span class="no">id</span> ~ <span class="no">top</span> + <span class="no">bottom</span>
+
+<span class="co"># plot profiles</span>
+<span class="fu"><a href="SoilProfileCollection-plotting-methods.html">plot</a></span>(<span class="no">sp1</span>)
+
+<span class="co"># extract top/bottom depths associated with all A horizons</span>
+<span class="no">f</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">i</span>) {
+  <span class="no">h</span> <span class="kw">&lt;-</span> <span class="fu"><a href="SPC-utils.html">horizons</a></span>(<span class="no">i</span>)
+  <span class="no">idx</span> <span class="kw">&lt;-</span> <span class="fu">grep</span>(<span class="st">'^A'</span>, <span class="no">h</span>$<span class="no">name</span>)
+  <span class="fu">c</span>(<span class="fu">min</span>(<span class="no">h</span>$<span class="no">top</span>[<span class="no">idx</span>]), <span class="fu">max</span>(<span class="no">h</span>$<span class="no">bottom</span>[<span class="no">idx</span>], <span class="kw">na.rm</span><span class="kw">=</span><span class="fl">TRUE</span>))
+}
+
+<span class="co"># apply function to sp1, result is a list</span>
+<span class="no">a</span> <span class="kw">&lt;-</span> <span class="fu"><a href="profileApply-methods.html">profileApply</a></span>(<span class="no">sp1</span>, <span class="no">f</span>, <span class="kw">simplify</span><span class="kw">=</span><span class="fl">FALSE</span>)
+<span class="co"># convert list into matrix</span>
+<span class="no">a</span> <span class="kw">&lt;-</span> <span class="fu">do.call</span>(<span class="st">'rbind'</span>, <span class="no">a</span>)
+
+<span class="co"># plot</span>
+<span class="fu"><a href="SoilProfileCollection-plotting-methods.html">plot</a></span>(<span class="no">sp1</span>)
+<span class="co"># annotate with brackets</span>
+<span class="co"># note that plotting order is derived from the call to `plot(sp1)`</span>
+<span class="fu">addBracket</span>(<span class="no">a</span>[, <span class="fl">1</span>], <span class="no">a</span>[, <span class="fl">2</span>], <span class="kw">col</span><span class="kw">=</span><span class="st">'red'</span>)
+
+<span class="co"># more interesting example using diagnostic horizons</span>
+<span class="kw">if</span>(<span class="fu">require</span>(<span class="no">soilDB</span>)) {
+  <span class="co"># load some sample data with diagnostic horizons</span>
+  <span class="fu">data</span>(<span class="no">loafercreek</span>)
+
+  <span class="co"># extract first 15 profiles</span>
+  <span class="no">x</span> <span class="kw">&lt;-</span> <span class="no">loafercreek</span>[<span class="fl">1</span>:<span class="fl">15</span>, ]
+  <span class="no">s</span> <span class="kw">&lt;-</span> <span class="fu"><a href="SPC-utils.html">site</a></span>(<span class="no">x</span>)
+
+  <span class="co"># plot</span>
+  <span class="fu">par</span>(<span class="kw">mar</span><span class="kw">=</span><span class="fu">c</span>(<span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">0</span>))
+  <span class="fu"><a href="SoilProfileCollection-plotting-methods.html">plot</a></span>(<span class="no">x</span>, <span class="kw">name</span><span class="kw">=</span><span class="st">'hzname'</span>, <span class="kw">id.style</span><span class="kw">=</span><span class="st">'top'</span>)
+
+  <span class="co"># add brackets describing the argillic horizon</span>
+  <span class="fu">addDiagnosticBracket</span>(<span class="no">x</span>, <span class="st">'argillic horizon'</span>, <span class="kw">col</span><span class="kw">=</span><span class="st">'red'</span>)
+  <span class="co"># add brackets describing paralithic contact</span>
+  <span class="fu">addDiagnosticBracket</span>(<span class="no">x</span>, <span class="st">'paralithic contact'</span>, <span class="kw">col</span><span class="kw">=</span><span class="st">'blue'</span>)
+}</pre>
+  </div>
+  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+    <h2>Contents</h2>
+    <ul class="nav nav-pills nav-stacked">
+      <li><a href="#arguments">Arguments</a></li>
+
+      <li><a href="#details">Details</a></li>
+
+      <li><a href="#note">Note</a></li>
+
+      <li><a href="#see-also">See also</a></li>
+
+      <li><a href="#examples">Examples</a></li>
+    </ul>
+
+    <h2>Author</h2>
+    D.E. Beaudette
+  </div>
+</div>

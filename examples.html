@@ -1,0 +1,24 @@
+---
+layout: page
+title: Examples
+header: Examples
+group: navigation
+---
+{% include JB/setup %}
+
+{% assign examples = site.posts | where:"category","Example" %}
+{% for post in examples %}
+<a href="{{ site.baseurl }}{{ post.url }}">
+<div class="col-xs-6 col-md-3 example">
+    <div class="panel panel-default">
+        <div class="panel-body">
+        <!-- <div class="panel-body" style="background-image: url({{ ASSET_PATH }}/thumbnails/{{ post.thumbnail }})"> -->
+            <!-- <h4>{{ post.title }}{% if post.author %}<br><small>{{ post.author }}</small>{% endif %}</h4> -->
+            <h4>{{ post.title }}{% if post.author %}<br><small>by <strong>{{ post.author }}</strong></small>{% endif %}</h4>
+            <img src="{{ ASSET_PATH }}/thumbnails/{{ post.thumbnail }}" class="img-thumbnail">
+            <p>{{ post.excerpt | strip_html | truncate: 140, '...' }}</p>
+        </div>
+    </div>
+</div>
+</a>
+{% endfor %}

@@ -1,0 +1,78 @@
+---
+layout: doc
+title: "Between Individual Distance Plot — plot_distance_graph"
+aqp_version: 1.10-1
+date: 2017-03-20 17:34:41 
+scripts: [jquery.sticky-kit.min.js, pkgdown.js]
+---
+
+<div class="row">
+  <div class="col-md-9 contents">
+    <div class="page-header">
+    <h1>Between Individual Distance Plot</h1>
+    </div>
+
+    
+    <p>Plot pair-wisee distances between individuals as line segments.</p>
+    
+
+    <pre><span class="fu">plot_distance_graph</span>(<span class="no">D</span>, <span class="kw">idx</span> <span class="kw">=</span> <span class="fl">1</span>:<span class="fu">dim</span>(<span class="fu">as.matrix</span>((<span class="no">D</span>)))[<span class="fl">1</span>])</pre>
+    
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
+    <dl class="dl-horizontal">
+      <dt>D</dt>
+      <dd>distance matrix, should be of class 'dist' or compatible class</dd>
+      <dt>idx</dt>
+      <dd>an integer sequence defining which individuals should be compared</dd>
+    </dl>
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>By default all individuals are plotting on the same axis. When there are more than about 10 individuals, the plot can become quite messy. See examples below for ideas.</p>
+    
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>No value is returned.</p>
+    
+    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
+
+    <p>http://casoilresource.lawr.ucdavis.edu/</p>
+    
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <p><code><a href="sp2.html">sp2</a></code>, <code><a href="profile_compare-methods.html">profile_compare</a></code></p>
+    
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><span class="fu">data</span>(<span class="no">sp2</span>)
+
+<span class="no">d</span> <span class="kw">&lt;-</span> <span class="fu"><a href="profile_compare-methods.html">profile_compare</a></span>(<span class="no">sp2</span>, <span class="kw">vars</span><span class="kw">=</span><span class="fu">c</span>(<span class="st">'prop'</span>,<span class="st">'field_ph'</span>,<span class="st">'hue'</span>,<span class="st">'value'</span>),
+<span class="kw">max_d</span><span class="kw">=</span><span class="fl">100</span>, <span class="kw">k</span><span class="kw">=</span><span class="fl">0.01</span>, <span class="kw">sample_interval</span><span class="kw">=</span><span class="fl">5</span>)
+
+<span class="fu">par</span>(<span class="kw">mfcol</span><span class="kw">=</span><span class="fu">c</span>(<span class="fl">3</span>,<span class="fl">1</span>), <span class="kw">mar</span><span class="kw">=</span><span class="fu">c</span>(<span class="fl">2.5</span>,<span class="fl">4.5</span>,<span class="fl">1</span>,<span class="fl">1</span>))
+<span class="fu">plot_distance_graph</span>(<span class="no">d</span>, <span class="kw">idx</span><span class="kw">=</span><span class="fl">1</span>:<span class="fl">6</span>)
+<span class="fu">plot_distance_graph</span>(<span class="no">d</span>, <span class="kw">idx</span><span class="kw">=</span><span class="fl">7</span>:<span class="fl">12</span>)
+<span class="fu">plot_distance_graph</span>(<span class="no">d</span>, <span class="kw">idx</span><span class="kw">=</span><span class="fl">12</span>:<span class="fl">18</span>)</pre>
+  </div>
+  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+    <h2>Contents</h2>
+    <ul class="nav nav-pills nav-stacked">
+      <li><a href="#arguments">Arguments</a></li>
+      
+      <li><a href="#details">Details</a></li>
+
+      <li><a href="#value">Value</a></li>
+
+      <li><a href="#references">References</a></li>
+
+      <li><a href="#see-also">See also</a></li>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
+
+    <h2>Author</h2>
+    Dylan E Beaudette
+  </div>
+</div>
+
+      

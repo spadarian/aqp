@@ -1,0 +1,85 @@
+---
+layout: doc
+title: "Get Indices to Unique Soil Profiles Within a Collection — unique-methods"
+aqp_version: 1.10-1
+date: 2017-03-20 17:34:41 
+scripts: [jquery.sticky-kit.min.js, pkgdown.js]
+---
+
+<div class="row">
+  <div class="col-md-9 contents">
+    <div class="page-header">
+    <h1>Get Indices to Unique Soil Profiles Within a Collection</h1>
+    </div>
+
+    
+    <p>This function returns a set of indices to a subset of profiles within a <code>SoilProfileCollection</code> object that are uniquely defined by a named set of horizon and site level attributes.</p>
+    
+
+    <pre><span class="fu">uniqueSPC</span>(<span class="no">x</span>, <span class="no">vars</span>)</pre>
+    
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
+    <dl class="dl-horizontal">
+      <dt>x</dt>
+      <dd>a SoilProfileCollection</dd>
+      <dt>vars</dt>
+      <dd>a character vector naming those horizon and site level attributes that will be used to test for duplication</dd>
+    </dl>
+    
+    <h2 class="hasAnchor" id="methods"><a class="anchor" href="#methods"></a>Methods</h2>
+
+    <p></p><dl class="dl-horizontal">
+    <p></p><dt><code>signature(x = "SoilProfileCollection")</code></dt><dd>
+</dd>
+</dl>
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>Duplicates are identified via MD5 hash of select horizon and site level attributes.</p>
+    
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>A vector of integer indices that can be used to subset unique profiles from the original <code>SoilProfileCollection</code> object.</p>
+    
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><span class="co">## use the digest library to detect duplicate data</span>
+<span class="fu">data</span>(<span class="no">sp1</span>)
+
+<span class="co"># make a copy, make new IDs, and stack</span>
+<span class="no">s.1</span> <span class="kw">&lt;-</span> <span class="no">sp1</span>
+<span class="no">s.2</span> <span class="kw">&lt;-</span> <span class="no">sp1</span>
+<span class="no">s.2</span>$<span class="no">id</span> <span class="kw">&lt;-</span> <span class="fu">paste</span>(<span class="no">s.2</span>$<span class="no">id</span>, <span class="st">'-copy'</span>, <span class="kw">sep</span><span class="kw">=</span><span class="st">''</span>)
+<span class="no">s</span> <span class="kw">&lt;-</span> <span class="fu">rbind</span>(<span class="no">s.1</span>, <span class="no">s.2</span>)
+<span class="fu">depths</span>(<span class="no">s</span>) <span class="kw">&lt;-</span> <span class="no">id</span> ~ <span class="no">top</span> + <span class="no">bottom</span>
+
+<span class="co"># digests are computed from horizon-level data only</span>
+<span class="co"># horizon boundaries and 'prop'</span>
+<span class="co"># result is an index of unqique profiles</span>
+
+<span class="no">u</span> <span class="kw">&lt;-</span> <span class="fu">unique</span>(<span class="no">s</span>, <span class="kw">vars</span><span class="kw">=</span><span class="fu">c</span>(<span class="st">'top'</span>, <span class="st">'bottom'</span>, <span class="st">'prop'</span>))
+
+<span class="co"># compare with and without dupes:</span>
+<span class="co"># note subsetting of SoilProfileCollection</span>
+<span class="fu">cbind</span>(<span class="kw">dupes</span><span class="kw">=</span><span class="fu">length</span>(<span class="no">s</span>), <span class="kw">no.dupes</span><span class="kw">=</span><span class="fu">length</span>(<span class="no">s</span>[<span class="no">u</span>, ]))</pre>
+  </div>
+  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+    <h2>Contents</h2>
+    <ul class="nav nav-pills nav-stacked">
+      <li><a href="#arguments">Arguments</a></li>
+      
+      <li><a href="#methods">Methods</a></li>
+
+      <li><a href="#details">Details</a></li>
+
+      <li><a href="#value">Value</a></li>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
+
+    <h2>Author</h2>
+    D.E. Beaudette
+  </div>
+</div>
+
+      

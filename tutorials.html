@@ -1,0 +1,33 @@
+---
+layout: page
+title: Tutorials
+header: Tutorials
+group: navigation
+---
+{% include JB/setup %}
+
+{% assign tuts_tags = "" | split:"|"  %}
+{% assign tuts = site.posts | where:"category","Tutorial" %}
+{% for post in tuts %}
+    {% for tag in post.tags %}
+        {% unless tuts_tags contains tag %}
+            {% assign tuts_tags = tuts_tags | push: tag %}
+        {% endunless %}
+    {% endfor %}
+{% endfor %}
+
+<ul class="tag_box inline">
+  {% assign tags_list = tuts_tags %}
+  {% include JB/tags_list %}
+</ul>
+
+
+{% for tag in tuts_tags %}
+    <h2 id="{{ tag }}-ref">{{ tag }}</h2>
+    {% assign tuts = site.posts | where:"category","Tutorial" | where_exp:"item","item.tags contains tag" %}
+    <ul>
+    {% for post in tuts %}
+        <li><a href="{{ site.baseurl }}{{ post.url }}">{{ post.title }}</a></li>
+    {% endfor %}
+    </ul>
+{% endfor %}

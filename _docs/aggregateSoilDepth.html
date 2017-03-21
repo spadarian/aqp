@@ -1,0 +1,76 @@
+---
+layout: doc
+title: "Probabalistic Estimation of Soil Depth — aggregateSoilDepth"
+aqp_version: 1.10-1
+date: 2017-03-20 17:34:41 
+scripts: [jquery.sticky-kit.min.js, pkgdown.js]
+---
+
+<div class="row">
+  <div class="col-md-9 contents">
+    <div class="page-header">
+    <h1>Probabalistic Estimation of Soil Depth</h1>
+    </div>
+
+    
+    <p>Estimate the most-likely depth to contact within a collection of soil profiles.</p>
+    
+
+    <pre><span class="fu">aggregateSoilDepth</span>(<span class="no">x</span>, <span class="no">groups</span>, <span class="kw">crit.prob</span> <span class="kw">=</span> <span class="fl">0.9</span>, <span class="kw">name</span> <span class="kw">=</span> <span class="st">"hzname"</span>, <span class="kw">p</span> <span class="kw">=</span> <span class="st">"Cr|R|Cd"</span>, <span class="no">...</span>)</pre>
+    
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
+    <dl class="dl-horizontal">
+      <dt>x</dt>
+      <dd>a <code>SoilProfileCollection</code> object</dd>
+      <dt>groups</dt>
+      <dd>the name of a site-level attribute that defines groups of profiles within a collection</dd>
+      <dt>crit.prob</dt>
+      <dd>probability cuttoff used to determine where the most likely depth to contact will be, e.g. 0.9 translates to 90% of profiles are shallower than this depth</dd>
+      <dt>name</dt>
+      <dd>horizon-level attribute where horizon designation is stored</dd>
+      <dt>p</dt>
+      <dd>a REGEX pattern that matches non-soil genetic horizons</dd>
+      <dt>&#8230;</dt>
+      <dd>additional arguments to <code>slab</code></dd>
+    </dl>
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>This function computes a probability-based estimate of soil depth by group. If no grouping variable exists, a dummy value can be used to compute a single estimate. The <code>crit.prob</code> argument sets the critical probability (e.g. 0.9) at which soil depth within a group of profiles is determined. For example, a <code>crit.prob</code> of 0.95 might result in an estimated soil depth (e.g. 120cm) where 95% of the profiles (by group) had depths that were less than or equal to 120cm.</p>
+    
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>A <code>data.frame</code> is returned, with as many rows as there are unique group labels, as specified in <code>groups</code>.</p>
+    
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <p><code><a href="estimateSoilDepth.html">estimateSoilDepth</a>,<a href="slab-methods.html">slab</a></code></p>
+    
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><span class="fu">data</span>(<span class="no">sp1</span>)
+<span class="fu">depths</span>(<span class="no">sp1</span>) <span class="kw">&lt;-</span> <span class="no">id</span> ~ <span class="no">top</span> + <span class="no">bottom</span>
+<span class="fu"><a href="SPC-utils.html">site</a></span>(<span class="no">sp1</span>) <span class="kw">&lt;-</span> ~ <span class="no">group</span>
+
+<span class="fu">aggregateSoilDepth</span>(<span class="no">sp1</span>, <span class="st">'group'</span>, <span class="kw">crit.prob</span> <span class="kw">=</span> <span class="fl">0.9</span>)</pre>
+  </div>
+  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+    <h2>Contents</h2>
+    <ul class="nav nav-pills nav-stacked">
+      <li><a href="#arguments">Arguments</a></li>
+      
+      <li><a href="#details">Details</a></li>
+
+      <li><a href="#value">Value</a></li>
+
+      <li><a href="#see-also">See also</a></li>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
+
+    <h2>Author</h2>
+    D.E. Beaudette
+  </div>
+</div>
+
+      

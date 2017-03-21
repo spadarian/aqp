@@ -1,0 +1,354 @@
+---
+layout: post
+category: Tutorial
+title: "Getting soils data from USDA-NCSS databases"
+tagline:
+date: 2016-08-17 00:00:00 
+tags: [USDA-NRCS data]
+authors: [Dylan Beaudette]
+versions:
+    aqp: 1.9
+    soilDB: 1.8-1
+---
+<style type="text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script src="data:application/x-javascript,%0A%0Awindow%2EbuildTabsets%20%3D%20function%28tocID%29%20%7B%0A%0A%20%20%2F%2F%20build%20a%20tabset%20from%20a%20section%20div%20with%20the%20%2Etabset%20class%0A%20%20function%20buildTabset%28tabset%29%20%7B%0A%0A%20%20%20%20%2F%2F%20check%20for%20fade%20and%20pills%20options%0A%20%20%20%20var%20fade%20%3D%20tabset%2EhasClass%28%22tabset%2Dfade%22%29%3B%0A%20%20%20%20var%20pills%20%3D%20tabset%2EhasClass%28%22tabset%2Dpills%22%29%3B%0A%20%20%20%20var%20navClass%20%3D%20pills%20%3F%20%22nav%2Dpills%22%20%3A%20%22nav%2Dtabs%22%3B%0A%0A%20%20%20%20%2F%2F%20determine%20the%20heading%20level%20of%20the%20tabset%20and%20tabs%0A%20%20%20%20var%20match%20%3D%20tabset%2Eattr%28%27class%27%29%2Ematch%28%2Flevel%28%5Cd%29%20%2F%29%3B%0A%20%20%20%20if%20%28match%20%3D%3D%3D%20null%29%0A%20%20%20%20%20%20return%3B%0A%20%20%20%20var%20tabsetLevel%20%3D%20Number%28match%5B1%5D%29%3B%0A%20%20%20%20var%20tabLevel%20%3D%20tabsetLevel%20%2B%201%3B%0A%0A%20%20%20%20%2F%2F%20find%20all%20subheadings%20immediately%20below%0A%20%20%20%20var%20tabs%20%3D%20tabset%2Efind%28%22div%2Esection%2Elevel%22%20%2B%20tabLevel%29%3B%0A%20%20%20%20if%20%28%21tabs%2Elength%29%0A%20%20%20%20%20%20return%3B%0A%0A%20%20%20%20%2F%2F%20create%20tablist%20and%20tab%2Dcontent%20elements%0A%20%20%20%20var%20tabList%20%3D%20%24%28%27%3Cul%20class%3D%22nav%20%27%20%2B%20navClass%20%2B%20%27%22%20role%3D%22tablist%22%3E%3C%2Ful%3E%27%29%3B%0A%20%20%20%20%24%28tabs%5B0%5D%29%2Ebefore%28tabList%29%3B%0A%20%20%20%20var%20tabContent%20%3D%20%24%28%27%3Cdiv%20class%3D%22tab%2Dcontent%22%3E%3C%2Fdiv%3E%27%29%3B%0A%20%20%20%20%24%28tabs%5B0%5D%29%2Ebefore%28tabContent%29%3B%0A%0A%20%20%20%20%2F%2F%20build%20the%20tabset%0A%20%20%20%20tabs%2Eeach%28function%28i%29%20%7B%0A%0A%20%20%20%20%20%20%2F%2F%20get%20the%20tab%20div%0A%20%20%20%20%20%20var%20tab%20%3D%20%24%28tabs%5Bi%5D%29%3B%0A%0A%20%20%20%20%20%20%2F%2F%20get%20the%20id%20then%20sanitize%20it%20for%20use%20with%20bootstrap%20tabs%0A%20%20%20%20%20%20var%20id%20%3D%20tab%2Eattr%28%27id%27%29%3B%0A%0A%20%20%20%20%20%20%2F%2F%20remove%20any%20table%20of%20contents%20entries%20associated%20with%0A%20%20%20%20%20%20%2F%2F%20this%20ID%20%28since%20we%27ll%20be%20removing%20the%20heading%20element%29%0A%20%20%20%20%20%20%24%28%22div%23%22%20%2B%20tocID%20%2B%20%22%20li%20a%5Bhref%3D%27%23%22%20%2B%20id%20%2B%20%22%27%5D%22%29%2Eparent%28%29%2Eremove%28%29%3B%0A%0A%20%20%20%20%20%20%2F%2F%20sanitize%20the%20id%20for%20use%20with%20bootstrap%20tabs%0A%20%20%20%20%20%20id%20%3D%20id%2Ereplace%28%2F%5B%2E%5C%2F%3F%26%21%23%3C%3E%5D%2Fg%2C%20%27%27%29%2Ereplace%28%2F%5Cs%2Fg%2C%20%27%5F%27%29%3B%0A%20%20%20%20%20%20tab%2Eattr%28%27id%27%2C%20id%29%3B%0A%0A%20%20%20%20%20%20%2F%2F%20get%20the%20heading%20element%20within%20it%2C%20grab%20it%27s%20text%2C%20then%20remove%20it%0A%20%20%20%20%20%20var%20heading%20%3D%20tab%2Efind%28%27h%27%20%2B%20tabLevel%20%2B%20%27%3Afirst%27%29%3B%0A%20%20%20%20%20%20var%20headingText%20%3D%20heading%2Ehtml%28%29%3B%0A%20%20%20%20%20%20heading%2Eremove%28%29%3B%0A%0A%20%20%20%20%20%20%2F%2F%20build%20and%20append%20the%20tab%20list%20item%0A%20%20%20%20%20%20var%20a%20%3D%20%24%28%27%3Ca%20role%3D%22tab%22%20data%2Dtoggle%3D%22tab%22%3E%27%20%2B%20headingText%20%2B%20%27%3C%2Fa%3E%27%29%3B%0A%20%20%20%20%20%20a%2Eattr%28%27href%27%2C%20%27%23%27%20%2B%20id%29%3B%0A%20%20%20%20%20%20a%2Eattr%28%27aria%2Dcontrols%27%2C%20id%29%3B%0A%20%20%20%20%20%20var%20li%20%3D%20%24%28%27%3Cli%20role%3D%22presentation%22%3E%3C%2Fli%3E%27%29%3B%0A%20%20%20%20%20%20li%2Eappend%28a%29%3B%0A%20%20%20%20%20%20if%20%28i%20%3D%3D%3D%200%29%0A%20%20%20%20%20%20%20%20li%2Eattr%28%27class%27%2C%20%27active%27%29%3B%0A%20%20%20%20%20%20tabList%2Eappend%28li%29%3B%0A%0A%20%20%20%20%20%20%2F%2F%20set%20it%27s%20attributes%0A%20%20%20%20%20%20tab%2Eattr%28%27role%27%2C%20%27tabpanel%27%29%3B%0A%20%20%20%20%20%20tab%2EaddClass%28%27tab%2Dpane%27%29%3B%0A%20%20%20%20%20%20tab%2EaddClass%28%27tabbed%2Dpane%27%29%3B%0A%20%20%20%20%20%20if%20%28fade%29%0A%20%20%20%20%20%20%20%20tab%2EaddClass%28%27fade%27%29%3B%0A%20%20%20%20%20%20if%20%28i%20%3D%3D%3D%200%29%20%7B%0A%20%20%20%20%20%20%20%20tab%2EaddClass%28%27active%27%29%3B%0A%20%20%20%20%20%20%20%20if%20%28fade%29%0A%20%20%20%20%20%20%20%20%20%20tab%2EaddClass%28%27in%27%29%3B%0A%20%20%20%20%20%20%7D%0A%0A%20%20%20%20%20%20%2F%2F%20move%20it%20into%20the%20tab%20content%20div%0A%20%20%20%20%20%20tab%2Edetach%28%29%2EappendTo%28tabContent%29%3B%0A%20%20%20%20%7D%29%3B%0A%20%20%7D%0A%0A%20%20%2F%2F%20convert%20section%20divs%20with%20the%20%2Etabset%20class%20to%20tabsets%0A%20%20var%20tabsets%20%3D%20%24%28%22div%2Esection%2Etabset%22%29%3B%0A%20%20tabsets%2Eeach%28function%28i%29%20%7B%0A%20%20%20%20buildTabset%28%24%28tabsets%5Bi%5D%29%29%3B%0A%20%20%7D%29%3B%0A%7D%3B%0A%0A"></script>
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+
+
+<div class="fluid-row" id="header">
+
+
+
+
+</div>
+
+
+<div id="soil-database-interface-the-soildb-package" class="section level1">
+<h1>Soil Database Interface: the <tt>soilDB</tt> package</h1>
+<p>2016-08-17 <br>Dylan Beaudette</p>
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>This package provides methods for extracting soils information from local PedonPC and AK Site databases (MS Access format), local NASIS databases (MS SQL Server), and the SDA web-service. Currently USDA-NCSS data sources are supported, however, there are plans to develop interfaces to outside systems such as the Global Soil Mapping project.</p>
+<div id="installation" class="section level3">
+<h3>Installation</h3>
+<p>You only need to do this once. With a recent version of R, it should be possible to get all of the packages that <code>soilDB</code> depends on via:</p>
+<pre class="r"><code># run these commands in the R console
+# stable version from CRAN + dependencies
+install.packages("RODBC", dep=TRUE)
+install.packages("aqp", dep = TRUE)
+install.packages("soilDB", dep=TRUE)</code></pre>
+</div>
+<div id="odbc-connection-to-the-local-nasis-database" class="section level3">
+<h3>ODBC Connection to the Local NASIS database</h3>
+<p>Setting up this connection is simple, and outlined in this <a href="http://ncss-tech.github.io/AQP/soilDB/setup_local_nasis.html">guide</a>. Queries submitted to the national database will load pedons or DMU data into your local database. Functions in <code>soilDB</code> can only access data in your local database, defined by the "selected set". While it is possible to filter pedon or DMU records within <strong>R</strong>, it is sometimes simpler to modify the "selected set" in NASIS. In other words:</p>
+<ol style="list-style-type: decimal">
+<li>load up your local database with pedons associated with your office, project, or MLRA</li>
+<li>build your selected set (pedon, site, DMU, etc.)</li>
+<li>load data into <strong>R</strong> for further filtering/processing</li>
+</ol>
+</div>
+<div id="r-notes" class="section level3">
+<h3>R Notes</h3>
+<p>A basic understanding of R syntax, object structure, package management system, and programming style will greatly help with integration of the <code>soilDB</code> and <code>aqp</code> packages into standard workflows. Lines that start with a <code>#</code> are treated as comments and ignored by R. Recall that online help documents can be accessed via:</p>
+<pre class="r"><code># get the manual page for a known function
+help(mean)
+# get the manual page for a package
+help(soilDB)
+help(aqp)
+# package demo
+demo(aqp)
+# use fuzzy matching to search for a topic or keyword
+help.search(boxplot)
+# shortcut:
+?plot</code></pre>
+<p><strong>Mini R Tutorial</strong></p>
+<pre class="r"><code># 1. objects: creation, structure, etc.
+x &lt;- 1:10       # 'x' is now a vector of integers 1 to 10 
+y &lt;- rnorm(10, mean=0, sd=1)  # 'y' is now a vector of 10 random numbers {mean=0, sd=1}
+d &lt;- data.frame(x, y) # d is a rectangular table with columns 'x' and 'y'
+
+str(d) # check structure
+class(d) # inspect object class
+head(d) # view first 6 rows
+rm(d, x, y) # clean-up by deleting these objects
+
+# 2. most function are vectorized: i.e. automatic iteration
+x &lt;- 1:10
+x + 1 # the '+' function knows about vectors, and recycles scalars accordingly
+
+# 3. missing data can cause problems unless accounted for
+x &lt;- c(x, NA) # 'c()' is the concatonate function
+# print the value by typing it into the R console followed by enter
+x
+
+mean(x) # result is NA, as most functions return NA in the presence of missing data
+mean(x, na.rm=TRUE) # mean computed after removal of missing data</code></pre>
+</div>
+</div>
+<div id="design" class="section level2">
+<h2>Design</h2>
+<p>The <code>soilDB</code> package provides two layers of functionality for extracting data from file-based databases (PedonPC), relational databases (local NASIS), and online data sources (Soil Data Access, OSD information, KSSL data). High-level functions <code>fetchPedonPC()</code> and <code>fetchNASIS()</code> query, combine, verify horizon logic, and return <code>SoilProfileCollection</code> class objects containing the most commonly used site/pedon/horizon data. Low-level functions such as <code>get_site_data_from_pedon_db()</code> and <code>get_hz_data_from_pedon_db()</code> extract specific data from a designated source, and return the results as a <code>data.frame</code> class object.</p>
+<div id="high-level-functions" class="section level3">
+<h3>High-Level Functions</h3>
+<p>When loading pedons with the <code>fetchNASIS()</code> or <code>fetchPedonPC()</code> functions, checks are performed for: * multiple map datums: results reported to the user, data are not modified * inconsistent horizon boundaries: pedons with inconsistent horizon boundaries are not loaded * missing lower horizon depths: offending horizons are <strong>fixed</strong> by replacing the missing bottom depth with the top depth + 2cm * sites missing pedon records: these data are not loaded</p>
+<p><strong>Fetch Pedons or DMU data from Local NASIS</strong></p>
+<p>The <code>fetchNASIS()</code> function will load pedons from the "selected set" in your local NASIS database. An ODBC connection named 'nasis_local' must <strong>first</strong> be <a href="https://r-forge.r-project.org/scm/viewvc.php/*checkout*/docs/soilDB/setup_local_nasis.html?root=aqp">established</a>. Details on the <code>fetchNASIS()</code> function can be found <a href="http://ncss-tech.github.io/AQP/soilDB/fetchNASIS-mini-tutorial.html">in this related tutorial</a>.</p>
+<pre class="r"><code>library(soilDB)
+# fetch pedons from the selected set, replace NULL rock fragment fractions with 0
+f &lt;- fetchNASIS(nullFragsAreZero=TRUE)
+# fetch pedons from the selected set, do not replace NULL rock fragment fractions with 0
+f &lt;- fetchNASIS(nullFragsAreZero=FALSE)
+
+# DMU data
+fc &lt;- fetchNASIS_component_data()</code></pre>
+<p><strong>Fetch Pedons from PedonPC 5.x Database</strong></p>
+<p>The <code>fetchPedonPC(dsn)</code> function will load all pedon records into the current R session, based on the value of <code>dsn</code>-- a path to a PedonPC version 5.x database. Note that it is not currently possible to use 64bit R to connect with 32bit Acccess. Therefore, if you plan on using this function, please remember to use the 32bit R executable.</p>
+<pre class="r"><code>library(soilDB)
+# this will only work if you have a PedonPC Database and Windows :(
+dsn &lt;- "S:/Service_Center/NRCS/pedon/pedon.accdb"
+f &lt;- fetchPedonPC(dsn)</code></pre>
+<p><strong>Fetch data from Soil Data Access (SDA) Web-Service</strong></p>
+<p>A more <a href="http://ncss-tech.github.io/AQP/soilDB/SDA-tutorial.html">recent tutorial</a> on this topic is available</p>
+<p>The <code>SDA_query()</code> function submits a query (<a href="https://technet.microsoft.com/en-us/library/bb264565(v=sql.90).aspx">T-SQL</a>) to the <a href="http://sdmdataaccess.nrcs.usda.gov/">SDA web-service</a>, parses the result, and returns a <code>data.frame</code> (rectangular table) object. <a href="http://sdmdataaccess.nrcs.usda.gov/QueryHelp.aspx">This page</a> contains links to SSURGO metadata and many example SQL queries.</p>
+<pre class="r"><code># get component-level data for a specific soil survey area (Yolo county, CA)
+q &lt;- "SELECT 
+component.mukey, cokey, comppct_r, compname, taxclname, 
+taxorder, taxsuborder, taxgrtgroup, taxsubgrp
+FROM legend
+INNER JOIN mapunit ON mapunit.lkey = legend.lkey
+LEFT OUTER JOIN component ON component.mukey = mapunit.mukey
+WHERE legend.areasymbol = 'CA113'"
+
+# run the query
+res &lt;- SDA_query(q)</code></pre>
+<p><strong>Get map unit geometry for a geographic area</strong> (updates pending for new SDA2 spatial query features)</p>
+<p>The <code>mapunit_geom_by_ll_bbox()</code> function accepts a bounding box defined in GCS (longitude, latitude) NAD83 coordinates, and returns a <code>SpatialPolygonsDataFrame</code> class object of map unit polygons. Note that map unit polygons that <em>overlap</em> with the bounding box are returned, rather than the <em>intersection</em> of bounding box and polygons.</p>
+<pre class="r"><code># define bounding box
+b &lt;- c(-120.54,38.61,-120.41,38.70)
+
+# fetch the results, may take about 10 seconds
+x &lt;- mapunit_geom_by_ll_bbox(b)</code></pre>
+<p><strong>Get basic horizon morphology and taxonomic data from Official Series Descriptions</strong></p>
+<p>The <code>fetchOSD()</code> function accepts a character vector of soil series names, and returns a <code>SpatialPolygonsDataFrame</code> class object of basic data from those series. Note that this service is provided by the <a href="http://casoilresource.lawr.ucdavis.edu">CA Soil Resource Lab</a> as an experimental prototype. The <strong>official</strong> <a href="https://soilseries.sc.egov.usda.gov/osdname.asp">series descriptions</a> should still be used to verify series information.</p>
+<pre class="r"><code># soils of interest
+s.list &lt;- c('musick', 'cecil', 'drummer', 'amador', 'pentz', 'reiff')
+
+# fetch and convert data into an SPC
+s &lt;- fetchOSD(s.list)
+
+# plot profiles
+par(mar=c(0,0,0,0))
+plot(s, name='hzname', cex.names=0.85, axis.line.offset=-4)</code></pre>
+<p><strong>Get the most commonly used data from the Kellog Soil Science Lab database</strong> (formerly NSSL database)</p>
+<p>The <code>fetchKSSL()</code> function accepts either a soil series name or bounding box in WGS84 geographic coordinates, and returns a <code>SpatialPolygonsDataFrame</code> class object containing the matching records. Note that this service is provided by the <a href="http://casoilresource.lawr.ucdavis.edu">CA Soil Resource Lab</a> as an experimental prototype, based on the June 2015 KSSL snapshot. If newer data are needed, it is best to consult the <strong>official</strong> <a href="http://ncsslabdatamart.sc.egov.usda.gov/">KSSL data</a>.</p>
+<pre class="r"><code># fetch and convert data into an SPC
+s &lt;- fetchKSSL(series='Pardee')
+
+# plot profiles
+par(mar=c(0,0,0,0))
+plot(s, name='hzn_desgn', cex.names=0.85, axis.line.offset=-4, color='clay')</code></pre>
+</div>
+<div id="low-level-functions" class="section level3">
+<h3>Low-Level Functions</h3>
+<p><strong>Fetch Data from a PedonPC 5.x Database</strong> These functions can be used to extract only subsets of the data available in a PedonPC database, but are generally only useful for advanced users.</p>
+<pre class="r"><code>dsn &lt;- 'path-to-pedon-database.accdb'
+# fetch only site data
+site_data &lt;- get_site_data_from_pedon_db(dsn)
+# fetch only horizon data
+hz_data &lt;- get_hz_data_from_pedon_db(dsn)
+# fetch only color data
+color_data &lt;- get_colors_from_pedon_db(dsn)
+# fetch extended data:
+# diagnostic horizons, fragment summary, texture modifiers, geomorphology, taxonomic history
+extended_data &lt;- get_extended_data_from_pedon_db(dsn)</code></pre>
+<p><strong>Fetch Data from a Local NASIS Database</strong> These functions can be used to extract only subsets of the data available in the local NASIS database (selected set), but are generally only useful for advanced users.</p>
+<pre class="r"><code># fetch only site data
+site_data &lt;- get_site_data_from_NASIS_db()
+# fetch only horizon data
+hz_data &lt;- get_hz_data_from_NASIS_db()
+# fetch only color data
+color_data &lt;- get_colors_from_NASIS_db()
+# fetch extended data:
+# diagnostic horizons, fragment summary, texture modifiers, geomorphology, taxonomic history
+extended_data &lt;- get_extended_data_from_NASIS_db()</code></pre>
+</div>
+</div>
+<div id="examples" class="section level2">
+<h2>Examples</h2>
+<div id="getting-ssurgo-data-from-sda" class="section level3">
+<h3>Getting SSURGO data from SDA</h3>
+<p>A quick example of how to use the USDA-NRCS <a href="http://sdmdataaccess.nrcs.usda.gov/">soil data access query facility</a> (SDA). The following code describes how to get component-level soils data for Yolo County (survey area CA113) and compute representative sub-order level classification for each map unit. This example requires an understanding of <a href="http://en.wikipedia.org/wiki/SQL">SQL</a>, <a href="http://en.wikipedia.org/wiki/USDA_soil_taxonomy">US Soil Taxonomy</a> and the <a href="http://soils.usda.gov/survey/geography/ssurgo/">SSURGO</a> database. While not the most efficient approach to the task described below, the code does illustrate several strategies for working with SSURGO data in R.</p>
+<p>First, we need to setup some functions that will help summarize component data, within each map unit. These functions will be applied <em>chunk-wise</em> to blocks of data, using the <a href="http://www.jstatsoft.org/v40/i01/paper">split-apply-combine</a> strategy.</p>
+<pre class="r"><code># compute total component percentages for the current block of components
+f.sum &lt;- function(i) {
+   n &lt;- nrow(i) # number of rows
+   s &lt;- sum(i$comppct_r) # total component percent
+   return(data.frame(pct=s, n=n)) # return the results
+}
+
+# pick the largest suborder from within each map unit
+f.largest &lt;- function(i) {
+   i.sorted &lt;- i[order(i$pct, decreasing=TRUE), ] # sort largest -&gt; smallest
+   top.suborder &lt;- i.sorted$taxsuborder[1] # get the largest suborder
+   top.suborder.pct &lt;- i.sorted$pct[1] # get the the corresponding component percent
+   return(data.frame(suborder=top.suborder, pct=top.suborder.pct)) # return results
+}</code></pre>
+<p>Load required libraries, setup a query, submit to SDA, and process the results.</p>
+<pre class="r"><code># load libraries
+library(soilDB)
+library(plyr)
+
+# get map unit-level data
+q.1 &lt;- "SELECT mukey, muacres
+FROM legend
+INNER JOIN mapunit ON mapunit.lkey = legend.lkey
+WHERE legend.areasymbol = 'CA113'"
+
+# get component-level data
+q.2 &lt;- "SELECT 
+component.mukey, cokey, comppct_r, compname, taxclname, taxorder, taxsuborder, taxgrtgroup, taxsubgrp
+FROM legend
+INNER JOIN mapunit ON mapunit.lkey = legend.lkey
+LEFT OUTER JOIN component ON component.mukey = mapunit.mukey
+WHERE legend.areasymbol = 'CA113'"
+
+# submit queries
+mu &lt;- SDA_query(q.1)
+co &lt;- SDA_query(q.2)
+
+# tabulate percentage of suborder-level taxa within each map unit (mukey)
+comp.suborder.sums &lt;- ddply(co, .(mukey, taxsuborder), f.sum, .progress='text')
+
+# keep the largest suborder, and its associated total percentage
+comp.suborder &lt;- ddply(comp.suborder.sums, .(mukey), f.largest, .progress='text')
+
+# join the largest suborder (by map unit) to mu
+x &lt;- join(mu, comp.suborder, by='mukey')
+
+# get an effective map unit area via: muacres * pct/100
+x$effective.area &lt;- with(x, muacres * pct / 100)</code></pre>
+<p>Compute the acreage of each suborder within Yolo county, round to the nearest integer, and sort. A spatially-explicit approach would be required for multi-survey area scenarios or an irregular chunk of a single survey.</p>
+<pre class="r"><code>sort(round(tapply(x$effective.area, x$suborder, sum)))</code></pre>
+<pre><code>## Orthents  Xerepts  Aquents Fluvents  Aquepts 
+##     3802     5834    12028    44516    49480</code></pre>
+</div>
+<div id="fetch-ssurgo-polygons-from-sda" class="section level3">
+<h3>Fetch SSURGO Polygons from SDA</h3>
+<p>Map unit polygons can also be queried from SDA, using a similar bounding box query, with the <code>mapunit_geom_by_ll_bbox()</code> function. This function returns a <code>SpatialPolygonsDataFrame</code> class object, containing all map unit delineations that <em>overlap</em> with the supplied bounding box. Post-processing with functions from the <code>rgeos</code> package can be used to extract the spatial intersection between map unit polygons and a region of interest.</p>
+<pre class="r"><code># define bounding box
+b &lt;- c(-120.54,38.61,-120.41,38.70)
+# query geometry
+x &lt;- mapunit_geom_by_ll_bbox(b) # about 20 seconds
+
+# reset margins, and plot the results
+par(mar=c(0,0,0,0))
+plot(x)
+# add our original bounding box in red
+rect(b[1], b[2], b[3], b[4], border='red', lwd=2)
+# add a title at the bottom of the figure
+title(sub='SSURGO Map Unit Delineations', line=-2, font=2)</code></pre>
+<p><img src="data:image/png;base64,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" title alt style="display: block; margin: auto;"></p>
+<pre class="r"><code># follow-up by retrieving corresponding map unit data from SDA
+in.statement &lt;- format_SQL_in_statement(unique(x$mukey))
+q &lt;- paste("SELECT mukey, muname FROM mapunit WHERE mukey IN ", in.statement, sep="")
+res &lt;- SDA_query(q)</code></pre>
+</div>
+<div id="the-gopheridge-sample-dataset" class="section level3">
+<h3>The <code>Gopheridge</code> Sample Dataset</h3>
+<p>The <code>gopheridge</code> sample dataset is very similar to the type of data returned from <code>fetchNASIS()</code> or <code>fetchPedonPC()</code>. The following demonstration is geared towards intermediate users of R and who are familiar with the classes and methods defined by the <code>aqp</code> package. Before proceeding it may be helpful to review the <code>aqp</code> manual pages: <code>library(aqp) ; help(aqp)</code>, or the <a href="http://ncss-tech.github.io/AQP/aqp/aqp-intro.html">SoilProfileCollection object introduction</a>.</p>
+<p>Open R, and setup the environment by loading packages and the sample dataset.</p>
+<pre class="r"><code>library(soilDB)
+library(Hmisc) # lots of helper functions in here
+
+# load example dataset
+data(gopheridge)
+
+# what kind of object is this?
+class(gopheridge)</code></pre>
+<pre><code>## [1] "SoilProfileCollection"
+## attr(,"package")
+## [1] "aqp"</code></pre>
+<p>Define a simple function for extracting the top depth of a diagnostic feature, and use to compute the top depth of Cr contact for each pedon. Note that the arguments to this function are <code>x</code> (a 1-item <code>SoilProfileCollection</code>, i.e. a single soil profile), and <code>d.hz</code> (the name of the diagnostic feature or horizon that we are querying). If the queried diagnostic feature/horizon is not present for any given pedon, <code>NA</code> is returned. This function is used in conjunction with <code>profileApply()</code>, such that it is evaluated for each pedon within a collection. The result is a vector of the same length as the number of pedons in the collection.</p>
+<pre class="r"><code># conditional eval of top hz depth of diagnostic feature or horizon
+f.diag.top &lt;- function(x, d.hz) {
+    # extract diagnostic horizon data
+    d &lt;- diagnostic_hz(x)
+    # subset to the requested diagnostic hz
+    d &lt;- subset(d, diag_kind == d.hz)
+  
+    # if missing return NA
+    if(nrow(d) == 0)
+        return(NA)
+    
+    # return top depth
+    return(d$featdept)
+}
+
+# compute depth to paralithic contact, save the results as site-level data
+gopheridge$paralithic.contact.depth &lt;- profileApply(gopheridge, f.diag.top, d.hz='paralithic contact')</code></pre>
+<p>Re-order the <code>gopheridge</code> profiles by presence/absence of paralithic contact, plot, and then annotate depth of Cr contact.</p>
+<pre class="r"><code># order by presence of paralithic contact and its depth
+new.order &lt;- order(gopheridge$paralithic.contact, gopheridge$paralithic.contact.depth)
+# setup margins:
+par(mar=c(0,0,0,0))
+plot(gopheridge, name='hzname', plot.order=new.order)
+# annotate paralithic contact with lines
+x.pos &lt;- 1:length(gopheridge)
+lines(x.pos, gopheridge$paralithic.contact.depth[new.order], lty=2, lwd=2, col='black')</code></pre>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABIAAAAHgCAMAAADquuaVAAABcVBMVEUAAAAAAEAAAEIAAFQAAIAAKgAAQAAAVEAAVEIAVKYAc4AAgJkAgLEAgMYbAAAuGABIKxJLNzZUAABUAFRUAIBUVABUVFRUVKZUgMZUpqZUpstUpuNdQy9eQyNhQhhiQSZkAABkQCtmQB1qPiJtOyhuOxlyOCFzAFR4XER6Wkh9Wyx+WjuAAACAAFSAAGSAAICAVICAVKaAWECAgACAgFSAgICAgJmAgLGAgMaApqaApsuApuOAsaaAxsaAxuOAxv+CWDKFVjiGVyiIVD6KVC+OUjeTNiqTTy+TVACdckqdczijcD+mVACmVFSmVICmbkamgICmgJSmgKamplSmpoCmpqampsampuOmxqamy6am48am4+Om4/+zjm60j124jlHGgADGgFTGgIDGplTGpoDG46bG/8bG/+PG///LaxvjlDfjplTjpoDjpqbj46bj/8bj/+Pj///y8vL/sVT/xnP/xoD/xqb/46b//8b//+P///9rijQNAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAgAElEQVR4nO2di58luXmWC2YhmKS5jEO8oQkBb7iP2SzZtYcMpo1xgGBjIN5wSRqYWa/NQA+XMTTde/56zqVKUkn66itVq0rSOc/7m11f5j3SV6rScz5JJZ1uhxBChdSVDgAhdLkCQAihYgJACKFiAkAIoWICQAihYgJACKFiAkAIoWICQAihYgJACKFiAkAIoWICQAihYgJACKFiAkAIoWICQAihYgJACKFiAkAIoWICQAihYgJACKFiAkAIoWICQAihYgJACKFiAkAIoWICQAihYgJACKFiAkAIoWICQAihYgJACKFiAkAIoWICQAihYgJACKFiAkAIoWICQAihYgJACKFiAkAIoWICQAihYgJACKFiAkAIoWICQAihYgJACKFiAkAIoWICQK7uuu5qd399FmXk0DldSw7RHkv0+KK7Ef8yHUDdWBkcei0bOe6vdrvXN6OHo9kyNmqPh6/fThURK8N3aGHU48hxLRu1R4C5HLXMUKyAu5vHT94fMfTu02efd2P2zq/nvvvgJ92z2133C1ddhOjdP3HVuUXsP3//wdtd95GjblzJ7xxMu+4vOPKDfH2oTSrj8cXNVz/q9pXsuu85csvY/33Xfe39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" title alt style="display: block; margin: auto;"></p>
+<hr>
+<p>This document is based on <code>aqp</code> version 1.9.11 and <code>soilDB</code> version 1.8-1. [2016-08-17]</p>
+</div>
+</div>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+$(document).ready(function () {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+});
+
+</script>
+
+

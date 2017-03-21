@@ -1,0 +1,84 @@
+---
+layout: doc
+title: "Estimate Soil Depth — estimateSoilDepth"
+aqp_version: 1.10-1
+date: 2017-03-20 17:34:41 
+scripts: [jquery.sticky-kit.min.js, pkgdown.js]
+---
+
+<div class="row">
+  <div class="col-md-9 contents">
+    <div class="page-header">
+    <h1>Estimate Soil Depth</h1>
+    </div>
+
+    
+    <p>Estimate the soil depth of a single profile within a SoilProfileCollection object.</p>
+    
+
+    <pre><span class="fu">estimateSoilDepth</span>(<span class="no">f</span>, <span class="kw">name</span> <span class="kw">=</span> <span class="st">"hzname"</span>, <span class="kw">top</span> <span class="kw">=</span> <span class="st">"hzdept"</span>, <span class="kw">bottom</span> <span class="kw">=</span> <span class="st">"hzdepb"</span>, <span class="kw">p</span> <span class="kw">=</span> <span class="st">'Cr|R|Cd'</span>,
+<span class="kw">no.contact.depth</span> <span class="kw">=</span> <span class="kw">NULL</span>, <span class="kw">no.contact.assigned</span> <span class="kw">=</span> <span class="kw">NULL</span>)</pre>
+    
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
+    <dl class="dl-horizontal">
+      <dt>f</dt>
+      <dd>A SoilProfileCollection object of length 1, e.g. a single profile</dd>
+      <dt>name</dt>
+      <dd>the name of the column that contains horizon designations</dd>
+      <dt>top</dt>
+      <dd>the name of the column that contains horizon top depths</dd>
+      <dt>bottom</dt>
+      <dd>the name of the column that contains horizon bottom depths</dd>
+      <dt>p</dt>
+      <dd>a REGEX pattern for determining contact with bedrock</dd>
+      <dt>no.contact.depth</dt>
+      <dd>in the absense of contact with bedrock, a depth at which we can assume a standard depth</dd>
+      <dt>no.contact.assigned</dt>
+      <dd>assumed standard depth</dd>
+    </dl>
+    
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>a single integer, the soil depth</p>
+    
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <p><code><a href="getSoilDepthClass.html">getSoilDepthClass</a></code>, <code><a href="profileApply-methods.html">profileApply</a></code></p>
+    
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><span class="fu">data</span>(<span class="no">sp1</span>)
+<span class="fu">depths</span>(<span class="no">sp1</span>) <span class="kw">&lt;-</span> <span class="no">id</span> ~ <span class="no">top</span> + <span class="no">bottom</span>
+
+<span class="co"># apply to each profile in a collection, and save as site-level attribute</span>
+<span class="no">sp1</span>$<span class="no">depth</span> <span class="kw">&lt;-</span> <span class="fu"><a href="profileApply-methods.html">profileApply</a></span>(<span class="no">sp1</span>, <span class="no">estimateSoilDepth</span>, <span class="kw">name</span><span class="kw">=</span><span class="st">'name'</span>, <span class="kw">top</span><span class="kw">=</span><span class="st">'top'</span>, <span class="kw">bottom</span><span class="kw">=</span><span class="st">'bottom'</span>)
+
+<span class="co">## Not run: ------------------------------------</span>
+<span class="co"># # sample data</span>
+<span class="co"># data(gopheridge, package='soilDB')</span>
+<span class="co"># </span>
+<span class="co"># # run on a single profile</span>
+<span class="co"># estimateSoilDepth(gopheridge[1, ])</span>
+<span class="co"># </span>
+<span class="co"># # apply to an entire collection</span>
+<span class="co"># profileApply(gopheridge, estimateSoilDepth)</span>
+<span class="co">## ---------------------------------------------</span></pre>
+  </div>
+  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+    <h2>Contents</h2>
+    <ul class="nav nav-pills nav-stacked">
+      <li><a href="#arguments">Arguments</a></li>
+      
+      <li><a href="#value">Value</a></li>
+
+      <li><a href="#see-also">See also</a></li>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
+
+    <h2>Author</h2>
+    D.E. Beaudette and J.M. Skovlin
+  </div>
+</div>
+
+      

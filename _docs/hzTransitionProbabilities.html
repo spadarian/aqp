@@ -1,0 +1,127 @@
+---
+layout: doc
+title: "Horizon Transition Probabilities — hzTransitionProbabilities"
+aqp_version: 1.10-1
+date: 2017-03-20 17:34:41 
+scripts: [jquery.sticky-kit.min.js, pkgdown.js]
+---
+
+<div class="row">
+  <div class="col-md-9 contents">
+    <div class="page-header">
+    <h1>Horizon Transition Probabilities</h1>
+    </div>
+
+    
+    <p>Functions for creating and working with horizon (sequence) transition probability matrices.</p>
+    
+
+    <pre><span class="fu">hzTransitionProbabilities</span>(<span class="no">x</span>, <span class="no">name</span>, <span class="kw">loopTerminalStates</span> <span class="kw">=</span> <span class="fl">FALSE</span>)
+
+<span class="fu">genhzTableToAdjMat</span>(<span class="no">tab</span>)
+
+<span class="fu">mostLikelyHzSequence</span>(<span class="no">mc</span>, <span class="no">t0</span>, <span class="kw">maxIterations</span><span class="kw">=</span><span class="fl">10</span>)</pre>
+    
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
+    <dl class="dl-horizontal">
+      <dt>x</dt>
+      <dd>A <code>SoilProfileCollection</code> object.</dd>
+      <dt>name</dt>
+      <dd>A horizon level attribute in <code>x</code> that names horizons.</dd>
+      <dt>loopTerminalStates</dt>
+      <dd>should terminal states loop back to themselves? This is useful when the transition probability matrix will be used to initialize a <code>markovchain</code> object. See examples below.</dd>
+      <dt>tab</dt>
+      <dd>A cross-tabulation relating original horizon designations to new, generalized horizon designations.</dd>
+      <dt>mc</dt>
+      <dd>A <code>markovchain</code> object, initialized from a horizon sequence transition probability matrix with looped terminal states.</dd>
+      <dt>t0</dt>
+      <dd>Time-zero: a label describing an initial state within a <code>markovchain</code> object.</dd>
+      <dt>maxIterations</dt>
+      <dd>the maximum number of iterations when search for the most-likely horizon sequence</dd>
+    </dl>
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>Details and related tutorial pending...</p>
+    
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>The function <code>hzTransitionProbabilities</code> returns a square matrix of transition probabilities. See examples.</p>
+    <p>The function <code>genhzTableToAdjMat</code> returns a square adjacency matrix. See examples.</p>
+    <p>The function <code>mostLikelyHzSequence</code> returns the most likely sequence of horizons, given a <code>markovchain</code> object initialized from horizon transition probabilities and an initial state, <code>t0</code>. See examples.</p>
+    
+    <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
+
+    <p>These functions are still experimental and subject to change.</p>
+    
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <p><code><a href="generalize.hz.html">generalize.hz</a></code></p>
+    
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><span class="fu">data</span>(<span class="no">sp4</span>)
+<span class="fu">depths</span>(<span class="no">sp4</span>) <span class="kw">&lt;-</span> <span class="no">id</span> ~ <span class="no">top</span> + <span class="no">bottom</span>
+
+<span class="co"># horizon transition probabilities: row -&gt; col transitions</span>
+(<span class="no">tp</span> <span class="kw">&lt;-</span> <span class="fu">hzTransitionProbabilities</span>(<span class="no">sp4</span>, <span class="st">'name'</span>))
+
+
+<span class="co">## Not run: ------------------------------------</span>
+<span class="co"># ## plot TP matrix with functions from sharpshootR package</span>
+<span class="co"># library(sharpshootR)</span>
+<span class="co"># par(mar=c(0,0,0,0), mfcol=c(1,2))</span>
+<span class="co"># plot(sp4)</span>
+<span class="co"># plotSoilRelationGraph(tp, graph.mode = 'directed', edge.arrow.size=0.5)</span>
+<span class="co"># </span>
+<span class="co"># ## demonstrate genhzTableToAdjMat usage</span>
+<span class="co"># data(loafercreek, package='soilDB')</span>
+<span class="co"># </span>
+<span class="co"># # convert contingency table -&gt; adj matrix / TP matrix</span>
+<span class="co"># tab &lt;- table(loafercreek$hzname, loafercreek$genhz)</span>
+<span class="co"># m &lt;- genhzTableToAdjMat(tab)</span>
+<span class="co"># </span>
+<span class="co"># # plot </span>
+<span class="co"># par(mar=c(0,0,0,0), mfcol=c(1,1))</span>
+<span class="co"># plotSoilRelationGraph(m, graph.mode = 'directed', edge.arrow.size=0.5)</span>
+<span class="co"># </span>
+<span class="co"># </span>
+<span class="co"># ## demonstrate markovchain integration</span>
+<span class="co"># library(markovchain)</span>
+<span class="co"># tp.loops &lt;- hzTransitionProbabilities(sp4, 'name', loopTerminalStates = TRUE)</span>
+<span class="co"># </span>
+<span class="co"># # init new markovchain from TP matrix</span>
+<span class="co"># mc &lt;- new("markovchain", states=dimnames(tp.loops)[[1]], transitionMatrix = tp.loops)</span>
+<span class="co"># </span>
+<span class="co"># # simple plot</span>
+<span class="co"># plot(mc, edge.arrow.size=0.5)</span>
+<span class="co"># </span>
+<span class="co"># # check absorbing states</span>
+<span class="co"># absorbingStates(mc)</span>
+<span class="co"># </span>
+<span class="co"># # steady-state:</span>
+<span class="co"># steadyStates(mc)</span>
+<span class="co">## ---------------------------------------------</span></pre>
+  </div>
+  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+    <h2>Contents</h2>
+    <ul class="nav nav-pills nav-stacked">
+      <li><a href="#arguments">Arguments</a></li>
+      
+      <li><a href="#details">Details</a></li>
+
+      <li><a href="#value">Value</a></li>
+
+      <li><a href="#note">Note</a></li>
+
+      <li><a href="#see-also">See also</a></li>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
+
+    <h2>Author</h2>
+    D.E. Beaudette
+  </div>
+</div>
+
+      

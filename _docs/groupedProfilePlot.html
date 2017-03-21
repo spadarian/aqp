@@ -1,0 +1,134 @@
+---
+layout: doc
+title: "Grouped Soil Profile Plot — groupedProfilePlot"
+aqp_version: 1.10-1
+date: 2017-03-20 17:34:41 
+scripts: [jquery.sticky-kit.min.js, pkgdown.js]
+---
+
+<div class="row">
+  <div class="col-md-9 contents">
+    <div class="page-header">
+    <h1>Grouped Soil Profile Plot</h1>
+    </div>
+
+    
+    <p>Plot a collection of soil profiles, sorted and labeled by group.</p>
+    
+
+    <pre><span class="fu">groupedProfilePlot</span>(<span class="no">x</span>, <span class="no">groups</span>, <span class="kw">group.name.offset</span> <span class="kw">=</span> -<span class="fl">5</span>,
+<span class="kw">group.name.cex</span> <span class="kw">=</span> <span class="fl">0.75</span>, <span class="kw">group.line.col</span> <span class="kw">=</span> <span class="st">"RoyalBlue"</span>,
+<span class="kw">group.line.lwd</span> <span class="kw">=</span> <span class="fl">2</span>, <span class="kw">group.line.lty</span> <span class="kw">=</span> <span class="fl">2</span>, <span class="kw">break.style</span><span class="kw">=</span><span class="st">'line'</span>,
+<span class="kw">arrow.offset</span><span class="kw">=</span><span class="no">group.name.offset</span> + <span class="fl">5</span>, <span class="kw">arrow.length</span><span class="kw">=</span><span class="fl">0.1</span>, <span class="no">...</span>)</pre>
+    
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
+    <dl class="dl-horizontal">
+      <dt>x</dt>
+      <dd>a <code>SoilProfileCollection</code> object</dd>
+      <dt>groups</dt>
+      <dd>the name of a site-level attribute that defines groups, factor levels will influence plotting order</dd>
+      <dt>group.name.offset</dt>
+      <dd>vertical offset for group names, single numeric value or vector of offsets</dd>
+      <dt>group.name.cex</dt>
+      <dd>font size for group names</dd>
+      <dt>group.line.col</dt>
+      <dd>color for line that splits groups</dd>
+      <dt>group.line.lwd</dt>
+      <dd>width of line that splits groups</dd>
+      <dt>group.line.lty</dt>
+      <dd>style of line that splits groups</dd>
+      <dt>break.style</dt>
+      <dd>style of group boundaries: "line", "arrow", "both"</dd>
+      <dt>arrow.offset</dt>
+      <dd>vertical offset for "arrow" style boundaries, single numeric value or vector of offsets</dd>
+      <dt>arrow.length</dt>
+      <dd>value passed to <code>arrows</code> to define arrow head size</dd>
+      <dt>&#8230;</dt>
+      <dd>further arguments to <code>plotSPC</code></dd>
+    </dl>
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>The ordering of groups can be adjusted by converting the site-level attribute used for grouping into a factor and explicitly setting the levels.</p>
+    
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <p><code><a href="SoilProfileCollection-plotting-methods.html">plotSPC</a></code></p>
+    
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><span class="co"># sample data</span>
+<span class="fu">data</span>(<span class="no">sp1</span>)
+<span class="co"># convert colors from Munsell to hex-encoded RGB</span>
+<span class="no">sp1</span>$<span class="no">soil_color</span> <span class="kw">&lt;-</span> <span class="fu">with</span>(<span class="no">sp1</span>, <span class="fu"><a href="munsell2rgb.html">munsell2rgb</a></span>(<span class="no">hue</span>, <span class="no">value</span>, <span class="no">chroma</span>))
+
+<span class="co"># promote to SoilProfileCollection</span>
+<span class="fu">depths</span>(<span class="no">sp1</span>) <span class="kw">&lt;-</span> <span class="no">id</span> ~ <span class="no">top</span> + <span class="no">bottom</span>
+<span class="fu"><a href="SPC-utils.html">site</a></span>(<span class="no">sp1</span>) <span class="kw">&lt;-</span> ~ <span class="no">group</span>
+
+<span class="co"># plot profiles, sorted and annotated by 'group'</span>
+<span class="fu">par</span>(<span class="kw">mar</span><span class="kw">=</span><span class="fu">c</span>(<span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">1</span>))
+<span class="fu">groupedProfilePlot</span>(<span class="no">sp1</span>, <span class="kw">groups</span><span class="kw">=</span><span class="st">'group'</span>, <span class="kw">max.depth</span><span class="kw">=</span><span class="fl">150</span>, <span class="kw">group.name.offset</span> <span class="kw">=</span> -<span class="fl">12</span>, <span class="kw">id.style</span><span class="kw">=</span><span class="st">'side'</span>)
+
+<span class="co"># make fake site-level attribute and adjust levels</span>
+<span class="no">sp1</span>$<span class="no">new.group</span> <span class="kw">&lt;-</span> <span class="fu">sample</span>(<span class="no">letters</span>[<span class="fl">1</span>:<span class="fl">3</span>], <span class="kw">size</span><span class="kw">=</span><span class="fu">length</span>(<span class="no">sp1</span>), <span class="kw">replace</span><span class="kw">=</span><span class="fl">TRUE</span>)
+
+<span class="co"># tabulate pedons / group</span>
+<span class="no">tab</span> <span class="kw">&lt;-</span> <span class="fu">table</span>(<span class="no">sp1</span>$<span class="no">new.group</span>)
+
+<span class="co"># sort large -&gt; small</span>
+<span class="no">tab</span> <span class="kw">&lt;-</span> <span class="fu">sort</span>(<span class="no">tab</span>, <span class="kw">decreasing</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
+
+<span class="co"># set levels based on sorted tabulation</span>
+<span class="co"># assign custom labels</span>
+<span class="no">sp1</span>$<span class="no">new.group</span> <span class="kw">&lt;-</span> <span class="fu">factor</span>(<span class="no">sp1</span>$<span class="no">new.group</span>, <span class="kw">levels</span><span class="kw">=</span><span class="fu"><a href="SoilProfileCollection-class.html">names</a></span>(<span class="no">tab</span>),
+<span class="kw">labels</span><span class="kw">=</span><span class="fu">paste0</span>(<span class="fu"><a href="SoilProfileCollection-class.html">names</a></span>(<span class="no">tab</span>), <span class="st">' ('</span>, <span class="no">tab</span>, <span class="st">')'</span>))
+<span class="fu">groupedProfilePlot</span>(<span class="no">sp1</span>, <span class="kw">groups</span><span class="kw">=</span><span class="st">'new.group'</span>, <span class="kw">max.depth</span><span class="kw">=</span><span class="fl">150</span>,
+<span class="kw">group.name.offset</span> <span class="kw">=</span> -<span class="fl">10</span>, <span class="kw">id.style</span><span class="kw">=</span><span class="st">'side'</span>)
+
+<span class="co"># offsets can be set using a vector of values, recycled as needed</span>
+<span class="fu">groupedProfilePlot</span>(<span class="no">sp1</span>, <span class="kw">groups</span><span class="kw">=</span><span class="st">'new.group'</span>, <span class="kw">max.depth</span><span class="kw">=</span><span class="fl">150</span>,
+<span class="kw">group.name.offset</span><span class="kw">=</span><span class="fu">c</span>(-<span class="fl">10</span>, -<span class="fl">5</span>), <span class="kw">id.style</span><span class="kw">=</span><span class="st">'side'</span>)
+
+<span class="co"># annotate with arrows instead of vertical lines</span>
+<span class="fu">groupedProfilePlot</span>(<span class="no">sp1</span>, <span class="kw">groups</span><span class="kw">=</span><span class="st">'new.group'</span>, <span class="kw">max.depth</span><span class="kw">=</span><span class="fl">150</span>,
+<span class="kw">group.name.offset</span><span class="kw">=</span><span class="fu">c</span>(-<span class="fl">10</span>, -<span class="fl">12</span>), <span class="kw">break.style</span><span class="kw">=</span><span class="st">'arrow'</span>, <span class="kw">arrow.offset</span><span class="kw">=</span>-<span class="fl">3</span>,
+<span class="kw">group.line.lty</span> <span class="kw">=</span> <span class="fl">1</span>, <span class="kw">group.line.lwd</span> <span class="kw">=</span> <span class="fl">1</span>, <span class="kw">id.style</span><span class="kw">=</span><span class="st">'side'</span>)
+
+<span class="co">## Not run: ------------------------------------</span>
+<span class="co"># # more complete example using data from soilDB package</span>
+<span class="co"># data(loafercreek, package='soilDB')</span>
+<span class="co"># par(mar=c(1,1,1,1))</span>
+<span class="co"># # lines</span>
+<span class="co"># groupedProfilePlot(loafercreek, groups='hillslope_pos', group.name.cex = 0.5, </span>
+<span class="co"># group.name.offset = -10)</span>
+<span class="co"># </span>
+<span class="co"># # arrows</span>
+<span class="co"># groupedProfilePlot(loafercreek, groups='hillslope_pos', group.name.cex = 0.5, </span>
+<span class="co"># group.name.offset = -10, break.style ='arrow', group.line.lty = 1, </span>
+<span class="co"># group.line.lwd = 1)</span>
+<span class="co"># </span>
+<span class="co"># # both</span>
+<span class="co"># groupedProfilePlot(loafercreek, groups='hillslope_pos', group.name.cex = 0.5, </span>
+<span class="co"># group.name.offset = -10, break.style ='both', group.line.lty = 1, </span>
+<span class="co"># group.line.lwd = 1)</span>
+<span class="co">## ---------------------------------------------</span></pre>
+  </div>
+  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+    <h2>Contents</h2>
+    <ul class="nav nav-pills nav-stacked">
+      <li><a href="#arguments">Arguments</a></li>
+      
+      <li><a href="#details">Details</a></li>
+
+      <li><a href="#see-also">See also</a></li>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
+
+    <h2>Author</h2>
+    D.E. Beaudette
+  </div>
+</div>
+
+      

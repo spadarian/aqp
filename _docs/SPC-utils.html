@@ -1,0 +1,91 @@
+---
+layout: doc
+title: "Getters, Setters, and Utility Methods for SoilProfileCollection Objects — SPC-utils"
+aqp_version: 1.10-1
+date: 2017-03-20 17:34:41 
+scripts: [jquery.sticky-kit.min.js, pkgdown.js]
+---
+
+<div class="row">
+  <div class="col-md-9 contents">
+    <div class="page-header">
+    <h1>Getters, Setters, and Utility Methods for SoilProfileCollection Objects</h1>
+    </div>
+
+    
+    <p>Getters, Setters, and Utility Methods for SoilProfileCollection Objects</p>
+    
+
+        
+    <h2 class="hasAnchor" id="methods"><a class="anchor" href="#methods"></a>Methods</h2>
+
+    <p></p><dl class="dl-horizontal">
+    <p></p><dt><code>signature(object = "SoilProfileCollection")</code></dt><dd>
+<!-- %%  ~~describe this method here~~ -->
+</dd>
+</dl>
+    
+    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
+
+    <p>http://casoilresource.lawr.ucdavis.edu/</p>
+    
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><span class="fu">data</span>(<span class="no">sp1</span>)
+
+<span class="co">## init SoilProfileCollection objects from data.frame</span>
+<span class="fu">depths</span>(<span class="no">sp1</span>) <span class="kw">&lt;-</span> <span class="no">id</span> ~ <span class="no">top</span> + <span class="no">bottom</span>
+
+<span class="co">## depth units</span>
+(<span class="no">du</span> <span class="kw">&lt;-</span> <span class="fu">depth_units</span>(<span class="no">sp1</span>))
+<span class="fu">depth_units</span>(<span class="no">sp1</span>) <span class="kw">&lt;-</span> <span class="st">'in'</span>
+<span class="fu">depth_units</span>(<span class="no">sp1</span>) <span class="kw">&lt;-</span> <span class="no">du</span>
+
+<span class="co">## get/set metadata on SoilProfileCollection objects</span>
+<span class="co"># this is a 1-row data.frame</span>
+<span class="no">m</span> <span class="kw">&lt;-</span> <span class="fu">metadata</span>(<span class="no">sp1</span>)
+<span class="no">m</span>$<span class="no">sampler</span> <span class="kw">&lt;-</span> <span class="st">'Dylan'</span>
+<span class="fu">metadata</span>(<span class="no">sp1</span>) <span class="kw">&lt;-</span> <span class="no">m</span>
+
+<span class="co">## extract horizon data from SoilProfileCollection objects as data.frame</span>
+<span class="no">h</span> <span class="kw">&lt;-</span> <span class="fu">horizons</span>(<span class="no">sp1</span>)
+
+<span class="co"># also replace horizon data in SoilProfileCollection objects</span>
+<span class="co"># original order and length must be preserved!</span>
+<span class="fu">horizons</span>(<span class="no">sp1</span>) <span class="kw">&lt;-</span> <span class="no">h</span>
+
+<span class="co"># get number of horizons</span>
+<span class="fu">nrow</span>(<span class="no">sp1</span>)
+
+
+<span class="co">## getting site-level data</span>
+<span class="fu">site</span>(<span class="no">sp1</span>)
+
+<span class="co">## setting site-level data</span>
+<span class="co"># site-level data from horizon-level data (stored in @horizons)</span>
+<span class="fu">site</span>(<span class="no">sp1</span>) <span class="kw">&lt;-</span> ~ <span class="no">group</span>
+
+
+<span class="co"># make some fake site data, and append from data.frame</span>
+<span class="co"># a matching ID column must be present in both @site and new data</span>
+<span class="co"># note that IDs should all be character class</span>
+<span class="no">d</span> <span class="kw">&lt;-</span> <span class="fu">data.frame</span>(<span class="kw">id</span><span class="kw">=</span><span class="fu">profile_id</span>(<span class="no">sp1</span>), <span class="kw">p</span><span class="kw">=</span><span class="fu">runif</span>(<span class="kw">n</span><span class="kw">=</span><span class="fu">length</span>(<span class="no">sp1</span>)), <span class="kw">stringsAsFactors</span><span class="kw">=</span><span class="fl">FALSE</span>)
+<span class="fu">site</span>(<span class="no">sp1</span>) <span class="kw">&lt;-</span> <span class="no">d</span></pre>
+  </div>
+  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+    <h2>Contents</h2>
+    <ul class="nav nav-pills nav-stacked">
+      
+      <li><a href="#methods">Methods</a></li>
+
+      <li><a href="#references">References</a></li>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
+
+    <h2>Author</h2>
+    Dylan E. Beaudette
+  </div>
+</div>
+
+      

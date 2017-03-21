@@ -1,0 +1,117 @@
+---
+layout: doc
+title: "Honcut Creek Soil Profile Data — sp2"
+aqp_version: 1.10-1
+date: 2017-03-20 17:34:41 
+scripts: [jquery.sticky-kit.min.js, pkgdown.js]
+---
+
+<div class="row">
+  <div class="col-md-9 contents">
+    <div class="page-header">
+    <h1>Honcut Creek Soil Profile Data</h1>
+    </div>
+
+    
+    <p>A collection of 18 soil profiles, consisting of select soil morphologic attributes, associated with a stratigraphic study conducted near Honcut Creek, California.</p>
+    
+
+    <pre><span class="fu">data</span>(<span class="no">sp2</span>)</pre>
+        
+    <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
+
+    <p>A data frame with 154 observations on the following 21 variables.
+  </p><dl class="dl-horizontal">
+    <dt><code>id</code></dt><dd>profile id</dd>
+    <dt><code>surface</code></dt><dd>dated surface</dd>
+    <dt><code>top</code></dt><dd>horizon top in cm</dd>
+    <dt><code>bottom</code></dt><dd>horizon bottom in cm</dd>
+    <dt><code>bound_distinct</code></dt><dd>horizon lower boundary distinctness class</dd>
+    <dt><code>bound_topography</code></dt><dd>horizon lower boundary topography class</dd>
+    <dt><code>name</code></dt><dd>horizon name</dd>
+    <dt><code>texture</code></dt><dd>USDA soil texture class</dd>
+    <dt><code>prop</code></dt><dd>field-estimated clay content</dd>
+    <dt><code>structure_grade</code></dt><dd>soil structure grade</dd>
+    <dt><code>structure_size</code></dt><dd>soil structure size</dd>
+    <dt><code>structure_type</code></dt><dd>soil structure type</dd>
+    <dt><code>stickiness</code></dt><dd>stickiness</dd>
+    <dt><code>plasticity</code></dt><dd>plasticity</dd>
+    <dt><code>field_ph</code></dt><dd>field-measured pH</dd>
+    <dt><code>hue</code></dt><dd>Munsell hue</dd>
+    <dt><code>value</code></dt><dd>Munsell value</dd>
+    <dt><code>chroma</code></dt><dd>Munsell chroma</dd>
+    <dt><code>r</code></dt><dd>RGB red component</dd>
+    <dt><code>g</code></dt><dd>RGB green component</dd>
+    <dt><code>b</code></dt><dd>RGB blue component</dd>
+    <dt><code>soil_color</code></dt><dd>R-friendly encoding of soil color</dd>
+  </dl>
+    
+    <h2 class="hasAnchor" id="source"><a class="anchor" href="#source"></a>Source</h2>
+
+    <p>Busacca, Alan J.; Singer, Michael J.; Verosub, Kenneth L. 1989. Late Cenozoic stratigraphy of the Feather and Yuba rivers area, California, with a section on soil development in mixed alluvium at Honcut Creek. USGS Bulletin 1590-G.</p>
+    
+    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
+
+    <p>http://casoilresource.lawr.ucdavis.edu/</p>
+    
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><span class="fu">data</span>(<span class="no">sp2</span>)
+
+<span class="co"># convert into SoilProfileCollection object</span>
+<span class="fu">depths</span>(<span class="no">sp2</span>) <span class="kw">&lt;-</span> <span class="no">id</span> ~ <span class="no">top</span> + <span class="no">bottom</span>
+
+<span class="co"># transfer site-level data</span>
+<span class="fu"><a href="SPC-utils.html">site</a></span>(<span class="no">sp2</span>) <span class="kw">&lt;-</span> ~ <span class="no">surface</span>
+
+<span class="co"># generate a new plotting order, based on the dated surface each soil was described on</span>
+<span class="no">p.order</span> <span class="kw">&lt;-</span> <span class="fu">order</span>(<span class="no">sp2</span>$<span class="no">surface</span>)
+
+<span class="co"># plot</span>
+<span class="fu">par</span>(<span class="kw">mar</span><span class="kw">=</span><span class="fu">c</span>(<span class="fl">1</span>,<span class="fl">0</span>,<span class="fl">3</span>,<span class="fl">0</span>))
+<span class="fu"><a href="SoilProfileCollection-plotting-methods.html">plot</a></span>(<span class="no">sp2</span>, <span class="kw">plot.order</span><span class="kw">=</span><span class="no">p.order</span>)
+
+<span class="co"># setup multi-figure output</span>
+<span class="fu">par</span>(<span class="kw">mfrow</span><span class="kw">=</span><span class="fu">c</span>(<span class="fl">2</span>,<span class="fl">1</span>), <span class="kw">mar</span><span class="kw">=</span><span class="fu">c</span>(<span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">1</span>,<span class="fl">0</span>))
+
+<span class="co"># truncate plot to 200 cm depth</span>
+<span class="fu"><a href="SoilProfileCollection-plotting-methods.html">plot</a></span>(<span class="no">sp2</span>, <span class="kw">plot.order</span><span class="kw">=</span><span class="no">p.order</span>, <span class="kw">max.depth</span><span class="kw">=</span><span class="fl">200</span>)
+<span class="fu">abline</span>(<span class="kw">h</span><span class="kw">=</span><span class="fl">200</span>, <span class="kw">lty</span><span class="kw">=</span><span class="fl">2</span>, <span class="kw">lwd</span><span class="kw">=</span><span class="fl">2</span>)
+
+<span class="co"># compute numerical distances between profiles </span>
+<span class="co"># based on select horizon-level properties, to a depth of 200 cm</span>
+<span class="no">d</span> <span class="kw">&lt;-</span> <span class="fu"><a href="profile_compare-methods.html">profile_compare</a></span>(<span class="no">sp2</span>, <span class="kw">vars</span><span class="kw">=</span><span class="fu">c</span>(<span class="st">'prop'</span>,<span class="st">'field_ph'</span>,<span class="st">'hue'</span>),
+<span class="kw">max_d</span><span class="kw">=</span><span class="fl">200</span>, <span class="kw">k</span><span class="kw">=</span><span class="fl">0</span>, <span class="kw">sample_interval</span><span class="kw">=</span><span class="fl">5</span>, <span class="kw">rescale.result</span><span class="kw">=</span><span class="fl">TRUE</span>)
+
+<span class="co"># plot dendrogram with ape package:</span>
+<span class="kw">if</span>(<span class="fu">require</span>(<span class="no">ape</span>) <span class="kw">&amp;</span> <span class="fu">require</span>(<span class="no">cluster</span>)) {
+<span class="no">h</span> <span class="kw">&lt;-</span> <span class="fu">diana</span>(<span class="no">d</span>)
+<span class="no">p</span> <span class="kw">&lt;-</span> <span class="fu">as.phylo</span>(<span class="fu">as.hclust</span>(<span class="no">h</span>))
+<span class="fu"><a href="SoilProfileCollection-plotting-methods.html">plot</a></span>(<span class="no">p</span>, <span class="kw">cex</span><span class="kw">=</span><span class="fl">0.75</span>, <span class="kw">label.offset</span><span class="kw">=</span><span class="fl">0.01</span>, <span class="kw">font</span><span class="kw">=</span><span class="fl">1</span>, <span class="kw">direct</span><span class="kw">=</span><span class="st">'down'</span>, <span class="kw">srt</span><span class="kw">=</span><span class="fl">90</span>, <span class="kw">adj</span><span class="kw">=</span><span class="fl">0.5</span>, <span class="kw">y.lim</span><span class="kw">=</span><span class="fu">c</span>(-<span class="fl">0.125</span>, <span class="fl">0.5</span>))
+
+<span class="co"># add in the dated surface type via color</span>
+<span class="fu">tiplabels</span>(<span class="kw">col</span><span class="kw">=</span><span class="fu">as.numeric</span>(<span class="no">sp2</span>$<span class="no">surface</span>), <span class="kw">pch</span><span class="kw">=</span><span class="fl">15</span>)
+
+<span class="co"># based on distance matrix values, YMMV</span>
+<span class="fu">legend</span>(<span class="st">'topleft'</span>, <span class="kw">legend</span><span class="kw">=</span><span class="fu">levels</span>(<span class="no">sp2</span>$<span class="no">surface</span>), <span class="kw">col</span><span class="kw">=</span><span class="fl">1</span>:<span class="fl">6</span>, <span class="kw">pch</span><span class="kw">=</span><span class="fl">15</span>, <span class="kw">bty</span><span class="kw">=</span><span class="st">'n'</span>, <span class="kw">bg</span><span class="kw">=</span><span class="st">'white'</span>, <span class="kw">cex</span><span class="kw">=</span><span class="fl">0.75</span>)
+}</pre>
+  </div>
+  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+    <h2>Contents</h2>
+    <ul class="nav nav-pills nav-stacked">
+      
+      <li><a href="#format">Format</a></li>
+
+      <li><a href="#source">Source</a></li>
+
+      <li><a href="#references">References</a></li>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
+
+    <h2>Author</h2>
+    Dylan E. Beaudette
+  </div>
+</div>
+
+      

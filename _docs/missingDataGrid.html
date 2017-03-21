@@ -1,0 +1,100 @@
+---
+layout: doc
+title: "Missing Data Grid — missingDataGrid"
+aqp_version: 1.10-1
+date: 2017-03-20 17:34:41 
+scripts: [jquery.sticky-kit.min.js, pkgdown.js]
+---
+
+<div class="row">
+  <div class="col-md-9 contents">
+    <div class="page-header">
+    <h1>Missing Data Grid</h1>
+    </div>
+
+    
+    <p>Generate a levelplot of missing data from a SoilProfileCollection object.</p>
+    
+
+    <pre><span class="fu">missingDataGrid</span>(<span class="no">s</span>, <span class="no">max_depth</span>, <span class="no">vars</span>, <span class="kw">filter.column</span> <span class="kw">=</span> <span class="kw">NULL</span>,
+<span class="kw">filter.regex</span> <span class="kw">=</span> <span class="kw">NULL</span>, <span class="kw">cols</span> <span class="kw">=</span> <span class="kw">NULL</span>, <span class="no">...</span>)</pre>
+    
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
+    <dl class="dl-horizontal">
+      <dt>s</dt>
+      <dd>a SoilProfilecollection object</dd>
+      <dt>max_depth</dt>
+      <dd>integer specifying the max depth of analysis</dd>
+      <dt>vars</dt>
+      <dd>character vector of column names over which to evaluate missing data</dd>
+      <dt>filter.column</dt>
+      <dd>a character string naming the column to apply the filter REGEX to</dd>
+      <dt>filter.regex</dt>
+      <dd>a character string with a regular expression used to filter horizon data OUT of the analysis</dd>
+      <dt>cols</dt>
+      <dd>a vector of colors</dd>
+      <dt>&#8230;</dt>
+      <dd>additional arguments passed on to <code>levelplot</code></dd>
+    </dl>
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>This function evaluates a `missing data fraction` based on slice-wise evaulation of named variables in a <code>SoilProfileCollection</code> object.</p>
+    
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>A <code>data.frame</code> describing the percentage of missing data by variable.</p>
+    
+    <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
+
+    <p>A lattice graphic is printed to the active output device.</p>
+    
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <p><code><a href="slice-methods.html">slice</a></code></p>
+    
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><span class="co">## visualizing missing data</span>
+<span class="co"># 10 random profiles</span>
+<span class="fu">require</span>(<span class="no">plyr</span>)
+<span class="no">s</span> <span class="kw">&lt;-</span> <span class="fu">ldply</span>(<span class="fl">1</span>:<span class="fl">10</span>, <span class="no">random_profile</span>)
+
+<span class="co"># randomly sprinkle some missing data</span>
+<span class="no">s</span>[<span class="fu">sample</span>(<span class="fu">nrow</span>(<span class="no">s</span>), <span class="fl">5</span>), <span class="st">'p1'</span>] <span class="kw">&lt;-</span> <span class="fl">NA</span>
+<span class="no">s</span>[<span class="fu">sample</span>(<span class="fu">nrow</span>(<span class="no">s</span>), <span class="fl">5</span>), <span class="st">'p2'</span>] <span class="kw">&lt;-</span> <span class="fl">NA</span>
+<span class="no">s</span>[<span class="fu">sample</span>(<span class="fu">nrow</span>(<span class="no">s</span>), <span class="fl">5</span>), <span class="st">'p3'</span>] <span class="kw">&lt;-</span> <span class="fl">NA</span>
+
+<span class="co"># set all p4 and p5 attributes of `soil 1' to NA</span>
+<span class="no">s</span>[<span class="fu">which</span>(<span class="no">s</span>$<span class="no">id</span> <span class="kw">==</span> <span class="st">'1'</span>), <span class="st">'p5'</span>] <span class="kw">&lt;-</span> <span class="fl">NA</span>
+<span class="no">s</span>[<span class="fu">which</span>(<span class="no">s</span>$<span class="no">id</span> <span class="kw">==</span> <span class="st">'1'</span>), <span class="st">'p4'</span>] <span class="kw">&lt;-</span> <span class="fl">NA</span>
+
+<span class="co"># upgrade to SPC</span>
+<span class="fu">depths</span>(<span class="no">s</span>) <span class="kw">&lt;-</span> <span class="no">id</span> ~ <span class="no">top</span> + <span class="no">bottom</span>
+
+<span class="co"># plot missing data via slicing + levelplot</span>
+<span class="fu">missingDataGrid</span>(<span class="no">s</span>, <span class="kw">max_depth</span><span class="kw">=</span><span class="fl">100</span>, <span class="kw">vars</span><span class="kw">=</span><span class="fu">c</span>(<span class="st">'p1'</span>, <span class="st">'p2'</span>, <span class="st">'p3'</span>, <span class="st">'p4'</span>, <span class="st">'p5'</span>),
+<span class="kw">main</span><span class="kw">=</span><span class="st">'Missing Data Fraction'</span>)</pre>
+  </div>
+  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+    <h2>Contents</h2>
+    <ul class="nav nav-pills nav-stacked">
+      <li><a href="#arguments">Arguments</a></li>
+      
+      <li><a href="#details">Details</a></li>
+
+      <li><a href="#value">Value</a></li>
+
+      <li><a href="#note">Note</a></li>
+
+      <li><a href="#see-also">See also</a></li>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
+
+    <h2>Author</h2>
+    D.E. Beaudette
+  </div>
+</div>
+
+      

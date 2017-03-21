@@ -1,0 +1,135 @@
+---
+layout: post
+category: Tutorial
+title: "Export NASIS pedon data to SHP file"
+tagline:
+date: 2015-12-01 00:00:00 
+tags: [USDA-NRCS data]
+authors: [Dylan Beaudette]
+versions:
+    aqp: 1.9
+    soilDB: 1.6
+---
+<style type="text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img { 
+  max-width:100%; 
+  height: auto; 
+}
+</style>
+<div class="container-fluid main-container">
+
+
+
+
+<div id="export-pedon-spatial-data-from-nasis" class="section level1">
+<h1>Export Pedon Spatial Data from NASIS</h1>
+<p>2015-12-01 Dylan Beaudette</p>
+<p>This document demonstrates how to use the <a href="https://r-forge.r-project.org/scm/viewvc.php/*checkout*/docs/soilDB/soilDB-Intro.html?root=aqp">soilDB</a> package to export pedon locations from the local NASIS database to shapefile.</p>
+<div id="setup-local-nasis-db" class="section level3">
+<h3>Setup Local NASIS DB</h3>
+<ol style="list-style-type: decimal">
+<li>load selected set with pedons and sites of interest</li>
+<li>determine spatial subset layer and adjust path accordingly</li>
+<li>adjust buffer accordingly</li>
+<li>adjust site-level attributes of interest</li>
+<li>adjust output directory accordingly</li>
+</ol>
+</div>
+<div id="install-r-packages" class="section level3">
+<h3>Install R Packages</h3>
+<p>With a recent version of R, it should be possible to get all of the packages that this tutorial depends on with the following commands. Note that you only have to do this once.</p>
+<pre class="r"><code># run these commands in the R console
+install.packages('soilDB', dep=TRUE) # stable version from CRAN + dependencies
+install.packages('rgdal', dep=TRUE)
+install.packages('rgeos', dep=TRUE)
+# latest version from r-forge
+install.packages("aqp", repos = "http://R-Forge.R-project.org", type = "source")
+install.packages("soilDB", repos = "http://R-Forge.R-project.org", type = "source")</code></pre>
+</div>
+<div id="get-pedons-and-save-to-shp" class="section level3">
+<h3>Get Pedons and Save to SHP</h3>
+<p>Copy and paste the following code into a new R script document. Step through the lines of code (e.g. run each line starting from the top) by moving the cursor to the top line and then press ctrl + enter repeatedly.</p>
+<pre class="r"><code>require(soilDB)
+require(rgdal)
+require(rgeos)
+
+# Load a suitable boundary for spatial subset of NASIS pedons
+# CRS: UTM z10 NAD83
+b &lt;-  readOGR(dsn='L:/CA630/FG_CA630_OFFICIAL.gdb', layer='ca630_b', encoding='encoding', stringsAsFactors=FALSE)
+
+# just in case, check that the "boundary" coordinate system is projected
+proj4string(b)
+if(! is.projected(b))
+  stop('boundary geometry must be in a projected coordinate system with units of meters', call. = FALSE)
+
+# extend boundary with 10km buffer
+# the coordinate reference system MUST have units of meters
+b &lt;- gBuffer(b, byid=FALSE, width=10000)
+
+# load entire contents of local database (pedon data)
+# CRS: GCS WGS84
+f &lt;- fetchNASIS()
+
+# some pedons are missing coordinates in NASIS
+# keep only those pedons with real coordinates
+good.idx &lt;- which(!is.na(f$x_std) &amp; !is.na(f$y_std))
+f &lt;- f[good.idx, ]
+
+# init coordinates from WGS84 decimal degrees
+coordinates(f) &lt;- ~ x_std + y_std
+proj4string(f) &lt;- '+proj=longlat +datum=WGS84'
+
+# extract only site data
+s &lt;- as(f, 'SpatialPointsDataFrame')
+
+# project boundary to CRS of points
+b &lt;- spTransform(b, CRS(proj4string(s)))
+
+# graphical check
+par(mar=c(1,1,1,1))
+plot(b)
+
+# add points to plot
+points(s, col='black', cex=0.5)
+
+# perform subset
+idx &lt;- gIntersects(s, b, byid = TRUE)
+ids &lt;- which(apply(idx, 2, any))
+s &lt;- s[ids,]
+
+# check subset
+points(s, col='red', cex=1, pch=0)
+
+# subsetting the columns useful for analysis
+s &lt;- s[, c("pedlabsampnum", "pedon_id","taxonname", "hillslope_pos", "elev_field", "slope_field", "aspect_field", "plantassocnm", "bedrckdepth", "bedrock_kind", 'pmkind', 'pmorigin')]
+
+# write to SHP
+# output CRS is CGS NAD83
+writeOGR(s, dsn='.', layer='NASIS-pedons', driver='ESRI Shapefile', overwrite_layer=TRUE)</code></pre>
+<hr>
+<p>This document is based on <code>aqp</code> version 1.9.1 and <code>soilDB</code> version 1.6.5.</p>
+</div>
+</div>
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+$(document).ready(function () {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+});
+
+</script>
+
+

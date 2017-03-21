@@ -1,0 +1,120 @@
+---
+layout: doc
+title: "Summarize Soil Colors — aggregateColor"
+aqp_version: 1.10-1
+date: 2017-03-20 17:34:41 
+scripts: [jquery.sticky-kit.min.js, pkgdown.js]
+---
+
+<div class="row">
+  <div class="col-md-9 contents">
+    <div class="page-header">
+    <h1>Summarize Soil Colors</h1>
+    </div>
+
+    
+    <p>Summarize soil color data, weighted by occurrence and horizon thickness.</p>
+    
+
+    <pre><span class="fu">aggregateColor</span>(<span class="no">x</span>, <span class="kw">groups</span> <span class="kw">=</span> <span class="st">"genhz"</span>, <span class="kw">col</span> <span class="kw">=</span> <span class="st">"soil_color"</span>)</pre>
+    
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
+    <dl class="dl-horizontal">
+      <dt>x</dt>
+      <dd>a <code>SoilProfileCollection</code> object</dd>
+      <dt>groups</dt>
+      <dd>the name of a horizon or site attribute used to group horizons, see examples</dd>
+      <dt>col</dt>
+      <dd>the name of a horizon-level attribute with soil color specified in hexadecimal (i.e. "#rrggbb")</dd>
+    </dl>
+    
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>A list with the following components:</p>
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>Weights are computed by:
+w_i = sqrt(sum(thickness_i)) * n_i
+where w_i is the weight associated with color i, thickness_i is the total thickness of all horizons associated with the color i, and n_i is the number of horizons associated with color i. Weights are computed within groups specified by <code>groups</code>.</p>
+    
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <p><code><a href="generalize.hz.html">generalize.hz</a></code></p>
+    
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><span class="co"># load some example data</span>
+<span class="fu">data</span>(<span class="no">sp1</span>, <span class="kw">package</span><span class="kw">=</span><span class="st">'aqp'</span>)
+
+<span class="co"># upgrade to SoilProfileCollection and convert Munsell colors</span>
+<span class="no">sp1</span>$<span class="no">soil_color</span> <span class="kw">&lt;-</span> <span class="fu">with</span>(<span class="no">sp1</span>, <span class="fu"><a href="munsell2rgb.html">munsell2rgb</a></span>(<span class="no">hue</span>, <span class="no">value</span>, <span class="no">chroma</span>))
+<span class="fu">depths</span>(<span class="no">sp1</span>) <span class="kw">&lt;-</span> <span class="no">id</span> ~ <span class="no">top</span> + <span class="no">bottom</span>
+<span class="fu"><a href="SPC-utils.html">site</a></span>(<span class="no">sp1</span>) <span class="kw">&lt;-</span> ~ <span class="no">group</span>
+
+<span class="co"># generalize horizon names</span>
+<span class="no">n</span> <span class="kw">&lt;-</span> <span class="fu">c</span>(<span class="st">'O'</span>, <span class="st">'A'</span>, <span class="st">'B'</span>, <span class="st">'C'</span>)
+<span class="no">p</span> <span class="kw">&lt;-</span> <span class="fu">c</span>(<span class="st">'O'</span>, <span class="st">'A'</span>, <span class="st">'B'</span>, <span class="st">'C'</span>)
+<span class="no">sp1</span>$<span class="no">genhz</span> <span class="kw">&lt;-</span> <span class="fu"><a href="generalize.hz.html">generalize.hz</a></span>(<span class="no">sp1</span>$<span class="no">name</span>, <span class="no">n</span>, <span class="no">p</span>)
+
+<span class="co"># aggregate colors over horizon-level attribute: 'genhz'</span>
+<span class="no">a</span> <span class="kw">&lt;-</span> <span class="fu">aggregateColor</span>(<span class="no">sp1</span>, <span class="st">'genhz'</span>)
+
+<span class="co"># aggregate colors over site-level attribute: 'group'</span>
+<span class="no">a</span> <span class="kw">&lt;-</span> <span class="fu">aggregateColor</span>(<span class="no">sp1</span>, <span class="st">'group'</span>)
+
+<span class="co"># aggregate colors over depth-slices</span>
+<span class="no">s</span> <span class="kw">&lt;-</span> <span class="fu"><a href="slice-methods.html">slice</a></span>(<span class="no">sp1</span>, <span class="fu">c</span>(<span class="fl">5</span>, <span class="fl">10</span>, <span class="fl">15</span>, <span class="fl">25</span>, <span class="fl">50</span>, <span class="fl">100</span>, <span class="fl">150</span>) ~ <span class="no">soil_color</span>)
+<span class="no">s</span>$<span class="no">slice</span> <span class="kw">&lt;-</span> <span class="fu">paste0</span>(<span class="no">s</span>$<span class="no">top</span>, <span class="st">' cm'</span>)
+<span class="no">a</span> <span class="kw">&lt;-</span> <span class="fu">aggregateColor</span>(<span class="no">s</span>, <span class="st">'slice'</span>)
+
+<span class="co">## Not run: ------------------------------------</span>
+<span class="co"># # optionally plot with helper function</span>
+<span class="co"># if(require(sharpshootR))</span>
+<span class="co">#   aggregateColorPlot(a)</span>
+<span class="co">## ---------------------------------------------</span>
+
+<span class="co"># a more interesting example</span>
+<span class="co">## Not run: ------------------------------------</span>
+<span class="co"># data(loafercreek, package = 'soilDB')</span>
+<span class="co"># </span>
+<span class="co"># # generalize horizon names using REGEX rules</span>
+<span class="co"># n &lt;- c('Oi', 'A', 'BA','Bt1','Bt2','Bt3','Cr','R')</span>
+<span class="co"># p &lt;- c('O', '^A$|Ad|Ap|AB','BA$|Bw', </span>
+<span class="co"># 'Bt1$|^B$','^Bt$|^Bt2$','^Bt3|^Bt4|CBt$|BCt$|2Bt|2CB$|^C$','Cr','R')</span>
+<span class="co"># loafercreek$genhz &lt;- generalize.hz(loafercreek$hzname, n, p)</span>
+<span class="co"># </span>
+<span class="co"># # remove non-matching generalized horizon names</span>
+<span class="co"># loafercreek$genhz[loafercreek$genhz == 'not-used'] &lt;- NA</span>
+<span class="co"># loafercreek$genhz &lt;- factor(loafercreek$genhz)</span>
+<span class="co"># </span>
+<span class="co"># a &lt;- aggregateColor(loafercreek, 'genhz')</span>
+<span class="co"># </span>
+<span class="co"># # plot results with helper function</span>
+<span class="co"># par(mar=c(1,4,4,1))</span>
+<span class="co"># aggregateColorPlot(a, print.n.hz = TRUE)</span>
+<span class="co"># </span>
+<span class="co"># # inspect aggregate data</span>
+<span class="co"># a$aggregate.data</span>
+<span class="co">## ---------------------------------------------</span></pre>
+  </div>
+  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+    <h2>Contents</h2>
+    <ul class="nav nav-pills nav-stacked">
+      <li><a href="#arguments">Arguments</a></li>
+      
+      <li><a href="#value">Value</a></li>
+
+      <li><a href="#details">Details</a></li>
+
+      <li><a href="#see-also">See also</a></li>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
+
+    <h2>Author</h2>
+    D.E. Beaudette
+  </div>
+</div>
+
+      

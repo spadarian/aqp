@@ -1,0 +1,216 @@
+---
+layout: doc
+title: "Apply a function to soil profiles within a SoilProfileCollection object. — profileApply-methods"
+aqp_version: 1.10-1
+date: 2017-03-20 17:34:41 
+scripts: [jquery.sticky-kit.min.js, pkgdown.js]
+---
+
+<div class="row">
+  <div class="col-md-9 contents">
+    <div class="page-header">
+    <h1>Apply a function to soil profiles within a SoilProfileCollection object.</h1>
+    </div>
+
+    
+    <p>Apply a function to soil profiles within a SoilProfileCollection object, each iteration has access to a SoilProfileCollection object.</p>
+    
+
+    <pre><span class="co"># method for SoilProfileCollection objects</span>
+<span class="fu">profileApply</span>(<span class="no">object</span>, <span class="no">FUN</span>, <span class="kw">simplify</span><span class="kw">=</span><span class="fl">TRUE</span>, <span class="no">...</span>)</pre>
+    
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
+    <dl class="dl-horizontal">
+      <dt>object</dt>
+      <dd>a SoilProfileCollection</dd>
+      <dt>FUN</dt>
+      <dd>a function to be applied to each profile within the collection</dd>
+      <dt>simplify</dt>
+      <dd>logical, should the result be simplified to a vector? see examples</dd>
+      <dt>&#8230;</dt>
+      <dd>further arguments passsed to FUN</dd>
+    </dl>
+    
+    <h2 class="hasAnchor" id="methods"><a class="anchor" href="#methods"></a>Methods</h2>
+
+    <p></p><dl class="dl-horizontal">
+<dt><code>signature(object = "SoilProfileCollection")</code></dt><dd></dd>
+</dl>
+    
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>When simplify is TRUE, a vector of length <code>nrow(object)</code> (horizon data) or of length <code>length(object)</code> (site data). When simplify is FALSE, a list is returned.</p>
+    
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <p><code><a href="slab-methods.html">slab</a></code>, <code><a href="estimateSoilDepth.html">estimateSoilDepth</a></code></p>
+    
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><span class="fu">data</span>(<span class="no">sp1</span>)
+<span class="fu">depths</span>(<span class="no">sp1</span>) <span class="kw">&lt;-</span> <span class="no">id</span> ~ <span class="no">top</span> + <span class="no">bottom</span>
+
+<span class="co"># estimate soil depth using horizon designations</span>
+<span class="fu">profileApply</span>(<span class="no">sp1</span>, <span class="no">estimateSoilDepth</span>, <span class="kw">name</span><span class="kw">=</span><span class="st">'name'</span>, <span class="kw">top</span><span class="kw">=</span><span class="st">'top'</span>, <span class="kw">bottom</span><span class="kw">=</span><span class="st">'bottom'</span>)
+
+<span class="co"># scale properties within each profile</span>
+<span class="co"># scaled = (x - mean(x)) / sd(x)</span>
+<span class="no">sp1</span>$<span class="no">d</span> <span class="kw">&lt;-</span> <span class="fu">profileApply</span>(<span class="no">sp1</span>, <span class="kw">FUN</span><span class="kw">=</span><span class="kw">function</span>(<span class="no">x</span>) <span class="fu">round</span>(<span class="fu">scale</span>(<span class="no">x</span>$<span class="no">prop</span>), <span class="fl">2</span>))
+<span class="fu"><a href="SoilProfileCollection-plotting-methods.html">plot</a></span>(<span class="no">sp1</span>, <span class="kw">name</span><span class="kw">=</span><span class="st">'d'</span>)
+
+
+<span class="co"># compute depth-wise differencing by profile</span>
+<span class="co"># note that our function expects that the column 'prop' exists</span>
+<span class="no">f</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">x</span>) { <span class="fu">c</span>(<span class="no">x</span>$<span class="no">prop</span>[<span class="fl">1</span>], <span class="fu">diff</span>(<span class="no">x</span>$<span class="no">prop</span>)) }
+<span class="no">sp1</span>$<span class="no">d</span> <span class="kw">&lt;-</span> <span class="fu">profileApply</span>(<span class="no">sp1</span>, <span class="kw">FUN</span><span class="kw">=</span><span class="no">f</span>)
+<span class="fu"><a href="SoilProfileCollection-plotting-methods.html">plot</a></span>(<span class="no">sp1</span>, <span class="kw">name</span><span class="kw">=</span><span class="st">'d'</span>)
+
+<span class="co"># compute depth-wise cumulative sum by profile</span>
+<span class="co"># note the use of an anonymous function</span>
+<span class="no">sp1</span>$<span class="no">d</span> <span class="kw">&lt;-</span> <span class="fu">profileApply</span>(<span class="no">sp1</span>, <span class="kw">FUN</span><span class="kw">=</span><span class="kw">function</span>(<span class="no">x</span>) <span class="fu">cumsum</span>(<span class="no">x</span>$<span class="no">prop</span>))
+<span class="fu"><a href="SoilProfileCollection-plotting-methods.html">plot</a></span>(<span class="no">sp1</span>, <span class="kw">name</span><span class="kw">=</span><span class="st">'d'</span>)
+
+
+<span class="co"># compute profile-means, and save to @site</span>
+<span class="co"># there must be some data in @site for this to work</span>
+<span class="fu"><a href="SPC-utils.html">site</a></span>(<span class="no">sp1</span>) <span class="kw">&lt;-</span> ~ <span class="no">group</span>
+<span class="no">sp1</span>$<span class="no">mean_prop</span> <span class="kw">&lt;-</span> <span class="fu">profileApply</span>(<span class="no">sp1</span>, <span class="kw">FUN</span><span class="kw">=</span><span class="kw">function</span>(<span class="no">x</span>) <span class="fu">mean</span>(<span class="no">x</span>$<span class="no">prop</span>, <span class="kw">na.rm</span><span class="kw">=</span><span class="fl">TRUE</span>))
+
+<span class="co"># re-plot using ranks defined by computed summaries (in @site)</span>
+<span class="fu"><a href="SoilProfileCollection-plotting-methods.html">plot</a></span>(<span class="no">sp1</span>, <span class="kw">plot.order</span><span class="kw">=</span><span class="fu">rank</span>(<span class="no">sp1</span>$<span class="no">mean_prop</span>))
+
+
+<span class="co">## iterate over profiles, subsetting horizon data</span>
+
+<span class="co"># example data</span>
+<span class="fu">data</span>(<span class="no">sp1</span>)
+
+<span class="co"># promote to SoilProfileCollection</span>
+<span class="fu">depths</span>(<span class="no">sp1</span>) <span class="kw">&lt;-</span> <span class="no">id</span> ~ <span class="no">top</span> + <span class="no">bottom</span>
+<span class="fu"><a href="SPC-utils.html">site</a></span>(<span class="no">sp1</span>) <span class="kw">&lt;-</span> ~ <span class="no">group</span>
+
+<span class="co"># make some fake site data related to a depth of some importance</span>
+<span class="no">sp1</span>$<span class="no">dep</span> <span class="kw">&lt;-</span> <span class="fu">profileApply</span>(<span class="no">sp1</span>, <span class="kw">function</span>(<span class="no">i</span>) {<span class="fu">round</span>(<span class="fu">rnorm</span>(<span class="kw">n</span><span class="kw">=</span><span class="fl">1</span>, <span class="kw">mean</span><span class="kw">=</span><span class="fu">mean</span>(<span class="no">i</span>$<span class="no">top</span>)))})
+
+<span class="co"># custom function for subsetting horizon data, by profile</span>
+<span class="co"># keep horizons with lower boundary &lt; site-level attribute 'dep'</span>
+<span class="no">fun</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">i</span>) {
+  <span class="co"># extract horizons</span>
+  <span class="no">h</span> <span class="kw">&lt;-</span> <span class="fu"><a href="SPC-utils.html">horizons</a></span>(<span class="no">i</span>)
+  <span class="co"># make an expression to subset horizons</span>
+  <span class="no">exp</span> <span class="kw">&lt;-</span> <span class="fu">paste</span>(<span class="st">'bottom &lt; '</span>, <span class="no">i</span>$<span class="no">dep</span>, <span class="kw">sep</span><span class="kw">=</span><span class="st">''</span>)
+  <span class="co"># subset horizons, and write-back into current SPC</span>
+  <span class="fu"><a href="SPC-utils.html">horizons</a></span>(<span class="no">i</span>) <span class="kw">&lt;-</span> <span class="fu">subset</span>(<span class="no">h</span>, <span class="kw">subset</span><span class="kw">=</span><span class="fu">eval</span>(<span class="fu">parse</span>(<span class="kw">text</span><span class="kw">=</span><span class="no">exp</span>)))
+  <span class="co"># return modified SPC</span>
+  <span class="fu">return</span>(<span class="no">i</span>)
+}
+
+<span class="co"># list of modified SoilProfileCollection objects</span>
+<span class="no">l</span> <span class="kw">&lt;-</span> <span class="fu">profileApply</span>(<span class="no">sp1</span>, <span class="no">fun</span>, <span class="kw">simplify</span><span class="kw">=</span><span class="fl">FALSE</span>)
+
+<span class="co"># re-combine list of SoilProfileCollection objects into a single SoilProfileCollection</span>
+<span class="no">sp1.sub</span> <span class="kw">&lt;-</span> <span class="fu">do.call</span>(<span class="no">rbind</span>, <span class="no">l</span>)
+
+<span class="co"># graphically check</span>
+<span class="fu">par</span>(<span class="kw">mfrow</span><span class="kw">=</span><span class="fu">c</span>(<span class="fl">2</span>,<span class="fl">1</span>), <span class="kw">mar</span><span class="kw">=</span><span class="fu">c</span>(<span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">1</span>,<span class="fl">0</span>))
+<span class="fu"><a href="SoilProfileCollection-plotting-methods.html">plot</a></span>(<span class="no">sp1</span>)
+<span class="fu">points</span>(<span class="fl">1</span>:<span class="fu">length</span>(<span class="no">sp1</span>), <span class="no">sp1</span>$<span class="no">dep</span>, <span class="kw">col</span><span class="kw">=</span><span class="st">'red'</span>, <span class="kw">pch</span><span class="kw">=</span><span class="fl">7</span>)
+<span class="fu"><a href="SoilProfileCollection-plotting-methods.html">plot</a></span>(<span class="no">sp1.sub</span>)
+
+
+<span class="co">## Not run: ------------------------------------</span>
+<span class="co"># ##</span>
+<span class="co"># ## helper functions: these must be modified to suit your own data</span>
+<span class="co"># ##</span>
+<span class="co"># </span>
+<span class="co"># # compute the weighted-mean of some property within a given diagnostic horizon</span>
+<span class="co"># # note that this requires conditional eval of data that may contain NA</span>
+<span class="co"># # see ?slab for details on the syntax</span>
+<span class="co"># # note that function expects certain columns within 'x'</span>
+<span class="co"># f.diag.wt.prop &lt;- function(x, d.hz, prop) {</span>
+<span class="co">#   # extract diagnostic horizon data</span>
+<span class="co">#   d &lt;- diagnostic_hz(x)</span>
+<span class="co">#   # subset to the requested diagnostic hz</span>
+<span class="co">#   d &lt;- d[d$diag_kind == d.hz, ]</span>
+<span class="co">#   # if missing return NA</span>
+<span class="co">#   if(nrow(d) == 0)</span>
+<span class="co">#     return(NA)</span>
+<span class="co">#   </span>
+<span class="co">#   # extract depths and check for missing</span>
+<span class="co">#   sv &lt;- c(d$featdept, d$featdepb)</span>
+<span class="co">#   if(any(is.na(sv)))</span>
+<span class="co">#     return(NA)</span>
+<span class="co">#   </span>
+<span class="co">#   # create formula from named property</span>
+<span class="co">#   fm &lt;- as.formula(paste('~', prop))</span>
+<span class="co">#   # return just the (weighted) mean, accessed from @horizons</span>
+<span class="co">#   s &lt;- slab(x, fm, slab.structure=sv, slab.fun=mean)$value</span>
+<span class="co">#   return(s)</span>
+<span class="co"># }</span>
+<span class="co"># </span>
+<span class="co"># </span>
+<span class="co"># # conditional eval of thickness of some diagnostic feature or horizon</span>
+<span class="co"># # will return a vector of length(x), you can save to @site</span>
+<span class="co"># f.diag.thickness &lt;- function(x, d.hz) {</span>
+<span class="co">#   # extract diagnostic horizon data</span>
+<span class="co">#   d &lt;- diagnostic_hz(x)</span>
+<span class="co">#   # subset to the requested diagnostic hz</span>
+<span class="co">#   d &lt;- d[d$diag_kind == d.hz, ]</span>
+<span class="co">#   # if missing return NA</span>
+<span class="co">#   if(nrow(d) == 0)</span>
+<span class="co">#     return(NA)</span>
+<span class="co">#   </span>
+<span class="co">#   # compute thickness</span>
+<span class="co">#   thick &lt;- d$featdepb - d$featdept</span>
+<span class="co">#   return(thick)</span>
+<span class="co"># }</span>
+<span class="co"># </span>
+<span class="co"># </span>
+<span class="co"># # conditional eval of property within particle size control section</span>
+<span class="co"># # makes assumptions about the SPC that is passed-in</span>
+<span class="co"># f.psc.prop &lt;- function(x, prop) {</span>
+<span class="co">#   # these are accessed from @site</span>
+<span class="co">#   sv &lt;- c(x$psctopdepth, x$pscbotdepth)</span>
+<span class="co">#   # test for missing PCS data</span>
+<span class="co">#   if(any(is.na(sv)))</span>
+<span class="co">#     return(NA) </span>
+<span class="co">#   </span>
+<span class="co">#   # this should never happen... unless someone made a mistake</span>
+<span class="co">#   # check to make sure that the lower PSC boundary is shallower than the depth</span>
+<span class="co">#   if(sv[2] &gt; max(x))</span>
+<span class="co">#     return(NA)</span>
+<span class="co">#   </span>
+<span class="co">#   # create formula from named property</span>
+<span class="co">#   fm &lt;- as.formula(paste('~', prop))</span>
+<span class="co">#   # return just the (weighted) mean, accessed from @horizons</span>
+<span class="co">#   s &lt;- slab(x, fm, slab.structure=sv, slab.fun=mean)$value</span>
+<span class="co">#   return(s)</span>
+<span class="co"># }</span>
+<span class="co"># </span>
+<span class="co"># # try with some sample data</span>
+<span class="co"># data(loafercreek, package='soilDB')</span>
+<span class="co"># </span>
+<span class="co"># profileApply(loafercreek, f.diag.wt.prop, d.hz='argillic horizon', prop='clay')</span>
+<span class="co"># profileApply(loafercreek, f.diag.thickness, d.hz='argillic horizon')</span>
+<span class="co"># profileApply(loafercreek, f.psc.prop, prop='clay')</span>
+<span class="co"># </span>
+<span class="co">## ---------------------------------------------</span></pre>
+  </div>
+  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+    <h2>Contents</h2>
+    <ul class="nav nav-pills nav-stacked">
+      <li><a href="#arguments">Arguments</a></li>
+      
+      <li><a href="#methods">Methods</a></li>
+
+      <li><a href="#value">Value</a></li>
+
+      <li><a href="#see-also">See also</a></li>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
+
+  </div>
+</div>
+
+      

@@ -1,0 +1,114 @@
+---
+layout: doc
+title: "SoilProfileCollection Class — SoilProfileCollection-class"
+aqp_version: 1.10-1
+date: 2017-03-20 17:34:41 
+scripts: [jquery.sticky-kit.min.js, pkgdown.js]
+---
+
+<div class="row">
+  <div class="col-md-9 contents">
+    <div class="page-header">
+    <h1>SoilProfileCollection Class</h1>
+    </div>
+
+    
+    <p>Basic class for storing soil profile collections, associated site data, and metadata.</p>
+    
+
+        
+    <h2 class="hasAnchor" id="objects-from-the-class"><a class="anchor" href="#objects-from-the-class"></a>Objects from the Class</h2>
+
+    <p>Objects can be created by calls of the form <code>new("SoilProfileCollection", ...)</code>.</p>
+    
+    <h2 class="hasAnchor" id="slots"><a class="anchor" href="#slots"></a>Slots</h2>
+
+    <p></p><dl class="dl-horizontal">
+    <dt><code>idcol</code>:</dt><dd>Object of class <code>"character"</code> the name of the column used to uniquely identify profiles </dd>
+    <dt><code>depthcols</code>:</dt><dd>Object of class <code>"character"</code> with the names of columns containing the horizon top and bottom boundaries</dd>
+    <dt><code>metadata</code>:</dt><dd>Object of class <code>"data.frame"</code> with collection-level metadata, having a single row, and user-defined columns</dd>
+    <dt><code>horizons</code>:</dt><dd>Object of class <code>"data.frame"</code> with 1 or more rows per profile</dd>
+    <dt><code>site</code>:</dt><dd>Object of class <code>"data.frame"</code> with 1 row per profile </dd>
+    <dt><code>sp</code>:</dt><dd>Object of class <code>"SpatialPoints"</code> with 1 row per profile </dd>
+    <dt><code>diagnostic</code>:</dt><dd>Object of class <code>"data.frame"</code> with 0 or more rows per profile</dd>
+  </dl>
+    
+    <h2 class="hasAnchor" id="methods"><a class="anchor" href="#methods"></a>Methods</h2>
+
+    <p></p><dl class="dl-horizontal">
+    <dt>$</dt><dd><code>signature(x = "SoilProfileCollection")</code>: ... </dd>
+    <dt>$&lt;-</dt><dd><code>signature(x = "SoilProfileCollection")</code>: ... </dd>
+    <dt>[</dt><dd><code>signature(x = "SoilProfileCollection", i = "ANY", j = "ANY")</code>: ... </dd>
+    <dt>[[</dt><dd><code>signature(x = "SoilProfileCollection", i = "ANY", j = "ANY")</code>: ... </dd>
+    <dt>[[&lt;-</dt><dd><code>signature(x = "SoilProfileCollection", i = "ANY", j = "ANY")</code>: ... </dd>
+    <dt>coordinates&lt;-</dt><dd><code>signature(object = "SoilProfileCollection")</code>: ... </dd>
+    <dt>horizonDepths</dt><dd><code>signature(object = "SoilProfileCollection")</code>: ... </dd>
+    <dt>horizons</dt><dd><code>signature(object = "SoilProfileCollection")</code>: ... </dd>
+    <dt>horizons&lt;-</dt><dd><code>signature(object = "SoilProfileCollection")</code>: ... </dd>
+    <dt>idname</dt><dd><code>signature(object = "SoilProfileCollection")</code>: ... </dd>
+    <dt>names</dt><dd><code>signature(x = "SoilProfileCollection")</code>: ... </dd>
+    <dt>horizonNames</dt><dd><code>signature(object = "SoilProfileCollection")</code>: ... </dd>
+    <dt>siteNames</dt><dd><code>signature(object = "SoilProfileCollection")</code>: ... </dd>
+    <dt>length</dt><dd><code>signature(x = "SoilProfileCollection")</code>: ... </dd>
+    <dt>max</dt><dd><code>signature(x = "SoilProfileCollection")</code>: ... </dd>
+    <dt>metadata</dt><dd><code>signature(object = "SoilProfileCollection")</code>: ... </dd>
+    <dt>metadata&lt;-</dt><dd><code>signature(object = "SoilProfileCollection")</code>: ... </dd>
+    <dt>min</dt><dd><code>signature(x = "SoilProfileCollection")</code>: ... </dd>
+    <dt>profile_id</dt><dd><code>signature(object = "SoilProfileCollection")</code>: ... </dd>
+    <dt>profile_plot</dt><dd><code>signature(object = "SoilProfileCollection")</code>: ... </dd>
+    <dt>show</dt><dd><code>signature(object = "SoilProfileCollection")</code>: ... </dd>
+    <dt>site</dt><dd><code>signature(object = "SoilProfileCollection")</code>: ... </dd>
+    <dt>site&lt;-</dt><dd><code>signature(object = "SoilProfileCollection")</code>: ... </dd>
+    <dt>slab</dt><dd><code>signature(data = "SoilProfileCollection")</code>: ... </dd>
+    <dt>units</dt><dd><code>signature(object = "SoilProfileCollection")</code>: ... </dd>
+    <dt>units&lt;-</dt><dd><code>signature(object = "SoilProfileCollection")</code>: ... </dd>
+	 </dl>
+    
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><span class="co"># concatenate SoilProfileCollection objects</span>
+<span class="co">## Not run: ------------------------------------</span>
+<span class="co"># require(plyr)</span>
+<span class="co"># d &lt;- ldply(1:10, random_profile)</span>
+<span class="co"># </span>
+<span class="co"># # promote to SoilProfileCollection and plot</span>
+<span class="co"># depths(d) &lt;- id ~ top + bottom</span>
+<span class="co"># plot(d)</span>
+<span class="co"># </span>
+<span class="co"># # split into new SoilProfileCollection objects by index</span>
+<span class="co"># d.1 &lt;- d[1, ]</span>
+<span class="co"># d.2 &lt;- d[2, ]</span>
+<span class="co"># d.345 &lt;- d[3:5, ]</span>
+<span class="co"># </span>
+<span class="co"># # recombine, note that profiles are sorted according to ID</span>
+<span class="co"># d.new &lt;- rbind(d.345, d.1, d.2)</span>
+<span class="co"># plot(d.new)</span>
+<span class="co">## ---------------------------------------------</span>
+
+<span class="co">## Not run: ------------------------------------</span>
+<span class="co"># # these next examples should throw an error</span>
+<span class="co"># # insert a missing horizon boundary</span>
+<span class="co"># data(sp1)</span>
+<span class="co"># sp1$top[1] &lt;- NA</span>
+<span class="co"># depths(sp1) &lt;- id ~ top + bottom</span>
+<span class="co">## ---------------------------------------------</span></pre>
+  </div>
+  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+    <h2>Contents</h2>
+    <ul class="nav nav-pills nav-stacked">
+      
+      <li><a href="#objects-from-the-class">Objects from the Class</a></li>
+
+      <li><a href="#slots">Slots</a></li>
+
+      <li><a href="#methods">Methods</a></li>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
+
+    <h2>Author</h2>
+    Pierre Roudier and Dylan E. Beaudette
+  </div>
+</div>
+
+      

@@ -1,0 +1,107 @@
+---
+layout: doc
+title: "Soil Profile Color Signatures — soilColorSignature"
+aqp_version: 1.10-1
+date: 2017-03-20 17:34:41 
+scripts: [jquery.sticky-kit.min.js, pkgdown.js]
+---
+
+<div class="row">
+  <div class="col-md-9 contents">
+    <div class="page-header">
+    <h1>Soil Profile Color Signatures</h1>
+    </div>
+
+    
+    <p>Generate a color signature for each soil profile in a collection.</p>
+    
+
+    <pre><span class="fu">soilColorSignature</span>(<span class="no">spc</span>, <span class="kw">r</span> <span class="kw">=</span> <span class="st">"r"</span>, <span class="kw">g</span> <span class="kw">=</span> <span class="st">"g"</span>, <span class="kw">b</span> <span class="kw">=</span> <span class="st">"b"</span>,
+<span class="kw">method</span><span class="kw">=</span><span class="st">'colorBucket'</span>, <span class="kw">RescaleLightnessBy</span> <span class="kw">=</span> <span class="fl">1</span>, <span class="kw">useProportions</span><span class="kw">=</span><span class="fl">TRUE</span>,
+<span class="kw">pigmentNames</span><span class="kw">=</span><span class="fu">c</span>(<span class="st">'.white.pigment'</span>, <span class="st">'.red.pigment'</span>, <span class="st">'.green.pigment'</span>,
+<span class="st">'.yellow.pigment'</span>, <span class="st">'.blue.pigment'</span>))</pre>
+    
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
+    <dl class="dl-horizontal">
+      <dt>spc</dt>
+      <dd>a <code>SoilProfileCollection</code> object</dd>
+      <dt>r</dt>
+      <dd>horizon level attribute containing soil color (sRGB) red values</dd>
+      <dt>g</dt>
+      <dd>horizon level attribute containing soil color (sRGB) green values</dd>
+      <dt>b</dt>
+      <dd>horizon level attribute containing soil color (sRGB) blue values</dd>
+      <dt>method</dt>
+      <dd>algorithm used to compute color signature, `colorBucket`, `depthSlices`, or `pam`</dd>
+      <dt>RescaleLightnessBy</dt>
+      <dd>rescaling factor for CIE LAB L-coordinate</dd>
+      <dt>useProportions</dt>
+      <dd>use proportions or quantities, see details</dd>
+      <dt>pigmentNames</dt>
+      <dd>names for resulting pigment proportions or quantities</dd>
+    </dl>
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>details pending...</p>
+    
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>For the `colorBucket` method, a <code>data.frame</code> object containing:
+</p><dl class="dl-horizontal">
+  <dt>id column</dt><dd>set according to <code>idname(spc)</code></dd>
+  <dt>.white.pigment</dt><dd>proportion or quantity of CIE LAB L-values</dd>
+  <dt>.red.pigment</dt><dd>proportion or quantity of CIE LAB positive A-values</dd>
+  <dt>.green.pigment</dt><dd>proportion or quantity of CIE LAB negative A-values</dd>
+  <dt>.yellow.pigment</dt><dd>proportion or quantity of CIE LAB positive B-values</dd>
+  <dt>.blue.pigment</dt><dd>proportion or quantity of CIE LAB negative B-values</dd>
+</dl>
+    <p>Column names can be adjusted with the <code>pigmentNames</code> argument.</p>
+    <p>For the `depthSlices` method ...</p>
+    <p>For the `pam` method ...</p>
+    
+    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
+
+    <p>https://en.wikipedia.org/wiki/Lab_color_space</p>
+    
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <p><code><a href="munsell2rgb.html">munsell2rgb</a></code></p>
+    
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><span class="co"># trivial example, not very interesting</span>
+<span class="fu">data</span>(<span class="no">sp1</span>)
+<span class="fu">depths</span>(<span class="no">sp1</span>) <span class="kw">&lt;-</span> <span class="no">id</span> ~ <span class="no">top</span> + <span class="no">bottom</span>
+
+<span class="co"># convert Munsell -&gt; sRGB triplets</span>
+<span class="no">rgb.data</span> <span class="kw">&lt;-</span> <span class="fu"><a href="munsell2rgb.html">munsell2rgb</a></span>(<span class="no">sp1</span>$<span class="no">hue</span>, <span class="no">sp1</span>$<span class="no">value</span>, <span class="no">sp1</span>$<span class="no">chroma</span>, <span class="kw">return_triplets</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
+<span class="no">sp1</span>$<span class="no">r</span> <span class="kw">&lt;-</span> <span class="no">rgb.data</span>$<span class="no">r</span>
+<span class="no">sp1</span>$<span class="no">g</span> <span class="kw">&lt;-</span> <span class="no">rgb.data</span>$<span class="no">g</span>
+<span class="no">sp1</span>$<span class="no">b</span> <span class="kw">&lt;-</span> <span class="no">rgb.data</span>$<span class="no">b</span>
+
+<span class="co"># extract color signature</span>
+<span class="no">pig</span> <span class="kw">&lt;-</span> <span class="fu">soilColorSignature</span>(<span class="no">sp1</span>)</pre>
+  </div>
+  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+    <h2>Contents</h2>
+    <ul class="nav nav-pills nav-stacked">
+      <li><a href="#arguments">Arguments</a></li>
+      
+      <li><a href="#details">Details</a></li>
+
+      <li><a href="#value">Value</a></li>
+
+      <li><a href="#references">References</a></li>
+
+      <li><a href="#see-also">See also</a></li>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
+
+    <h2>Author</h2>
+    D.E. Beaudette
+  </div>
+</div>
+
+      

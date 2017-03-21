@@ -1,0 +1,177 @@
+---
+layout: doc
+title: "Soil Chemical Data from Serpentinitic Soils of California — sp4"
+aqp_version: 1.10-1
+date: 2017-03-20 17:34:41 
+scripts: [jquery.sticky-kit.min.js, pkgdown.js]
+---
+
+<div class="row">
+  <div class="col-md-9 contents">
+    <div class="page-header">
+    <h1>Soil Chemical Data from Serpentinitic Soils of California</h1>
+    </div>
+
+    
+    <p>Soil Chemical Data from Serpentinitic Soils of California</p>
+    
+
+    <pre><span class="fu">data</span>(<span class="no">sp4</span>)</pre>
+        
+    <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
+
+    <p>A data frame with 30 observations on the following 13 variables.
+  </p><dl class="dl-horizontal">
+    <dt><code>id</code></dt><dd>site name</dd>
+    <dt><code>name</code></dt><dd>horizon designation</dd>
+    <dt><code>top</code></dt><dd>horizon top boundary in cm</dd>
+    <dt><code>bottom</code></dt><dd>horizon bottom boundary in cm</dd>
+    <dt><code>K</code></dt><dd>exchangeable K in c mol/kg</dd>
+    <dt><code>Mg</code></dt><dd>exchangeable Mg in cmol/kg</dd>
+    <dt><code>Ca</code></dt><dd>exchangeable Ca in cmol/kg</dd>
+    <dt><code>CEC_7</code></dt><dd>cation exchange capacity (NH4OAc at pH 7)</dd>
+    <dt><code>ex_Ca_to_Mg</code></dt><dd>extractable Ca:Mg ratio</dd>
+    <dt><code>sand</code></dt><dd>sand content by weight percentage</dd>
+    <dt><code>silt</code></dt><dd>silt content by weight percentage</dd>
+    <dt><code>clay</code></dt><dd>clay content by weight percentage</dd>
+    <dt><code>CF</code></dt><dd>&gt;2mm fraction by volume percentage</dd>
+  </dl>
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>Selected soil physical and chemical data from (McGahan et al., 2009).</p>
+    
+    <h2 class="hasAnchor" id="source"><a class="anchor" href="#source"></a>Source</h2>
+
+    <p>https://www.soils.org/publications/sssaj/articles/73/6/2087</p>
+    
+    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
+
+    <p>McGahan, D.G., Southard, R.J, Claassen, V.P. 2009. 
+Plant-Available Calcium Varies Widely in Soils on Serpentinite Landscapes. 
+Soil Sci. Soc. Am. J. 73: 2087-2095.</p>
+    
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><span class="co"># setup environment</span>
+<span class="fu">library</span>(<span class="no">aqp</span>)
+
+<span class="co"># load sample data set, a simple data.frame object with horizon-level data from 10 profiles</span>
+<span class="fu">data</span>(<span class="no">sp4</span>)
+<span class="fu">str</span>(<span class="no">sp4</span>)
+
+<span class="co"># optionally read about it...</span>
+<span class="co"># ?sp4</span>
+
+<span class="co"># upgrade to SoilProfileCollection</span>
+<span class="co"># 'id' is the name of the column containing the profile ID</span>
+<span class="co"># 'top' is the name of the column containing horizon upper boundaries</span>
+<span class="co"># 'bottom' is the name of the column containing horizon lower boundaries</span>
+<span class="fu">depths</span>(<span class="no">sp4</span>) <span class="kw">&lt;-</span> <span class="no">id</span> ~ <span class="no">top</span> + <span class="no">bottom</span>
+
+<span class="co"># check it out</span>
+<span class="fu">class</span>(<span class="no">sp4</span>) <span class="co"># class name</span>
+<span class="fu">str</span>(<span class="no">sp4</span>) <span class="co"># internal structure</span>
+
+<span class="co"># inspect object properties</span>
+<span class="fu"><a href="SPC-utils.html">idname</a></span>(<span class="no">sp4</span>) <span class="co"># self-explanitory</span>
+<span class="fu"><a href="SPC-utils.html">horizonDepths</a></span>(<span class="no">sp4</span>) <span class="co"># self-explanitory</span>
+
+<span class="co"># you can change these:</span>
+<span class="fu"><a href="SPC-utils.html">depth_units</a></span>(<span class="no">sp4</span>) <span class="co"># defaults to 'cm'</span>
+<span class="fu"><a href="SPC-utils.html">metadata</a></span>(<span class="no">sp4</span>) <span class="co"># not much to start with</span>
+
+<span class="co"># alter the depth unit metadata</span>
+<span class="fu"><a href="SPC-utils.html">depth_units</a></span>(<span class="no">sp4</span>) <span class="kw">&lt;-</span> <span class="st">'inches'</span> <span class="co"># units are really 'cm'</span>
+
+<span class="co"># more generic interface for adjusting metadata</span>
+<span class="no">md</span> <span class="kw">&lt;-</span> <span class="fu"><a href="SPC-utils.html">metadata</a></span>(<span class="no">sp4</span>) <span class="co"># save original metadata</span>
+
+<span class="co"># add columns</span>
+<span class="no">md</span>$<span class="no">describer</span> <span class="kw">&lt;-</span> <span class="st">'DGM'</span>
+<span class="no">md</span>$<span class="no">date</span> <span class="kw">&lt;-</span> <span class="fu">as.Date</span>(<span class="st">'2009-01-01'</span>)
+<span class="no">md</span>$<span class="no">citation</span> <span class="kw">&lt;-</span> <span class="st">'McGahan, D.G., Southard, R.J, Claassen, V.P. 
+2009. Plant-Available Calcium Varies Widely in Soils 
+on Serpentinite Landscapes. Soil Sci. Soc. Am. J. 73: 2087-2095.'</span>
+
+<span class="co"># re-assign</span>
+<span class="fu"><a href="SPC-utils.html">metadata</a></span>(<span class="no">sp4</span>) <span class="kw">&lt;-</span> <span class="no">md</span>
+<span class="fu"><a href="SPC-utils.html">depth_units</a></span>(<span class="no">sp4</span>) <span class="kw">&lt;-</span> <span class="st">'cm'</span> <span class="co"># fix depth units, back to 'cm'</span>
+
+<span class="co"># further inspection with common function overloads</span>
+<span class="fu">length</span>(<span class="no">sp4</span>) <span class="co"># number of profiles in the collection</span>
+<span class="fu">nrow</span>(<span class="no">sp4</span>) <span class="co"># number of horizons in the collection</span>
+<span class="fu"><a href="SoilProfileCollection-class.html">names</a></span>(<span class="no">sp4</span>) <span class="co"># column names</span>
+<span class="fu">min</span>(<span class="no">sp4</span>) <span class="co"># shallowest profile depth in collection</span>
+<span class="fu">max</span>(<span class="no">sp4</span>) <span class="co"># deepest profile depth in collection</span>
+
+<span class="co"># extraction of soil profile components</span>
+<span class="fu"><a href="SPC-utils.html">profile_id</a></span>(<span class="no">sp4</span>) <span class="co"># vector of profile IDs</span>
+<span class="fu"><a href="SPC-utils.html">horizons</a></span>(<span class="no">sp4</span>) <span class="co"># horizon data</span>
+
+<span class="co"># extraction of specific horizon attributes</span>
+<span class="no">sp4</span>$<span class="no">clay</span> <span class="co"># vector of clay content</span>
+
+<span class="co"># subsetting SoilProfileCollection objects</span>
+<span class="no">sp4</span>[<span class="fl">1</span>, ] <span class="co"># first profile in the collection</span>
+<span class="no">sp4</span>[, <span class="fl">1</span>] <span class="co"># first horizon from each profile</span>
+
+<span class="co"># basic plot method, highly customizable: see manual page ?plotSPC</span>
+<span class="fu"><a href="SoilProfileCollection-plotting-methods.html">plot</a></span>(<span class="no">sp4</span>)
+<span class="co"># inspect plotting area, very simple to overlay graphical elements</span>
+<span class="fu">abline</span>(<span class="kw">v</span><span class="kw">=</span><span class="fl">1</span>:<span class="fu">length</span>(<span class="no">sp4</span>), <span class="kw">lty</span><span class="kw">=</span><span class="fl">3</span>, <span class="kw">col</span><span class="kw">=</span><span class="st">'blue'</span>)
+<span class="co"># profiles are centered at integers, from 1 to length(obj)</span>
+<span class="fu">axis</span>(<span class="fl">1</span>, <span class="kw">line</span><span class="kw">=</span>-<span class="fl">1.5</span>, <span class="kw">at</span><span class="kw">=</span><span class="fl">1</span>:<span class="fl">10</span>, <span class="kw">cex.axis</span><span class="kw">=</span><span class="fl">0.75</span>, <span class="kw">font</span><span class="kw">=</span><span class="fl">4</span>, <span class="kw">col</span><span class="kw">=</span><span class="st">'blue'</span>, <span class="kw">lwd</span><span class="kw">=</span><span class="fl">2</span>)
+<span class="co"># y-axis is based on profile depths</span>
+<span class="fu">axis</span>(<span class="fl">2</span>, <span class="kw">line</span><span class="kw">=</span>-<span class="fl">1</span>, <span class="kw">at</span><span class="kw">=</span><span class="fu">pretty</span>(<span class="fl">1</span>:<span class="fu">max</span>(<span class="no">sp4</span>)), <span class="kw">cex.axis</span><span class="kw">=</span><span class="fl">0.75</span>, <span class="kw">font</span><span class="kw">=</span><span class="fl">4</span>, <span class="kw">las</span><span class="kw">=</span><span class="fl">1</span>, <span class="kw">col</span><span class="kw">=</span><span class="st">'blue'</span>, <span class="kw">lwd</span><span class="kw">=</span><span class="fl">2</span>)
+
+
+<span class="co"># symbolize soil properties via color</span>
+<span class="fu">par</span>(<span class="kw">mar</span><span class="kw">=</span><span class="fu">c</span>(<span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">4</span>,<span class="fl">0</span>))
+<span class="fu"><a href="SoilProfileCollection-plotting-methods.html">plot</a></span>(<span class="no">sp4</span>, <span class="kw">color</span><span class="kw">=</span><span class="st">'clay'</span>)
+<span class="fu"><a href="SoilProfileCollection-plotting-methods.html">plot</a></span>(<span class="no">sp4</span>, <span class="kw">color</span><span class="kw">=</span><span class="st">'CF'</span>)
+
+<span class="co"># apply a function to each profile, returning a single value per profile,</span>
+<span class="co"># in the same order as profile_id(sp4)</span>
+<span class="no">soil.depths</span> <span class="kw">&lt;-</span> <span class="fu"><a href="profileApply-methods.html">profileApply</a></span>(<span class="no">sp4</span>, <span class="no">max</span>) <span class="co"># recall that max() gives the depth of a soil profile</span>
+
+<span class="co"># check that the order is correct</span>
+<span class="fu">all.equal</span>(<span class="fu"><a href="SoilProfileCollection-class.html">names</a></span>(<span class="no">soil.depths</span>), <span class="fu"><a href="SPC-utils.html">profile_id</a></span>(<span class="no">sp4</span>))
+
+<span class="co"># a vector of values that is the same length as the number of profiles</span>
+<span class="co"># can be stored into site-level data</span>
+<span class="no">sp4</span>$<span class="no">depth</span> <span class="kw">&lt;-</span> <span class="no">soil.depths</span>
+<span class="co"># check: looks good</span>
+<span class="fu">max</span>(<span class="no">sp4</span>[<span class="fl">1</span>, ]) <span class="kw">==</span> <span class="no">sp4</span>$<span class="no">depth</span>[<span class="fl">1</span>]
+
+<span class="co"># extract site-level data </span>
+<span class="fu"><a href="SPC-utils.html">site</a></span>(<span class="no">sp4</span>) <span class="co"># as a data.frame</span>
+<span class="no">sp4</span>$<span class="no">depth</span> <span class="co"># specific columns as a vector</span>
+
+<span class="co"># use site-level data to alter plotting order</span>
+<span class="no">new.order</span> <span class="kw">&lt;-</span> <span class="fu">order</span>(<span class="no">sp4</span>$<span class="no">depth</span>) <span class="co"># the result is an index of rank</span>
+<span class="fu">par</span>(<span class="kw">mar</span><span class="kw">=</span><span class="fu">c</span>(<span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">0</span>))
+<span class="fu"><a href="SoilProfileCollection-plotting-methods.html">plot</a></span>(<span class="no">sp4</span>, <span class="kw">plot.order</span><span class="kw">=</span><span class="no">new.order</span>)
+
+<span class="co"># deconstruct SoilProfileCollection into a data.frame, with horizon+site data</span>
+<span class="fu">as</span>(<span class="no">sp4</span>, <span class="st">'data.frame'</span>)</pre>
+  </div>
+  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+    <h2>Contents</h2>
+    <ul class="nav nav-pills nav-stacked">
+      
+      <li><a href="#format">Format</a></li>
+
+      <li><a href="#details">Details</a></li>
+
+      <li><a href="#source">Source</a></li>
+
+      <li><a href="#references">References</a></li>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
+
+  </div>
+</div>
+
+      

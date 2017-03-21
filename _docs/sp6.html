@@ -1,0 +1,92 @@
+---
+layout: doc
+title: "Soil Physical and Chemical Data from Manganiferous Soils — sp6"
+aqp_version: 1.10-1
+date: 2017-03-20 17:34:41 
+scripts: [jquery.sticky-kit.min.js, pkgdown.js]
+---
+
+<div class="row">
+  <div class="col-md-9 contents">
+    <div class="page-header">
+    <h1>Soil Physical and Chemical Data from Manganiferous Soils</h1>
+    </div>
+
+    
+    <p>Soil Physical and Chemical Data from Manganiferous Soils (Bourgault and Rabenhorst, 2011)</p>
+    
+
+    <pre><span class="fu">data</span>(<span class="no">sp6</span>)</pre>
+        
+    <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
+
+    <p>A data frame with 30 observations on the following 13 variables.
+  </p><dl class="dl-horizontal">
+    <dt><code>id</code></dt><dd>pedon name</dd>
+    <dt><code>name</code></dt><dd>horizon designation</dd>
+    <dt><code>top</code></dt><dd>horizon top boundary in cm</dd>
+    <dt><code>bottom</code></dt><dd>horizon bottom boundary in cm</dd>
+    <dt><code>color</code></dt><dd>moist soil color in Munsell notation</dd>
+    <dt><code>texture</code></dt><dd>USDA soil texture class</dd>
+    <dt><code>sand</code></dt><dd>sand content by weight percentage</dd>
+    <dt><code>silt</code></dt><dd>silt content by weight percentage</dd>
+    <dt><code>clay</code></dt><dd>clay content by weight percentage</dd>
+    <dt><code>Fe</code></dt><dd>DCB-extracted Fe in g/kg (see citation)</dd>
+    <dt><code>Mn</code></dt><dd>DCB-extracted Mn in g/kg (see citation)</dd>
+    <dt><code>C</code></dt><dd>total organic carbon as g/kg</dd>
+    <dt><code>pH</code></dt><dd>measured in 1:1 H20 slurry</dd>
+    <dt><code>Db</code></dt><dd>bulk density (g/cc), clod method</dd>
+  </dl>
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>Selected soil physical and chemical data from (Bourgault and Rabenhorst, 2011).</p>
+    
+    <h2 class="hasAnchor" id="source"><a class="anchor" href="#source"></a>Source</h2>
+
+    <p>http://www.sciencedirect.com/science/article/pii/S0016706111001972</p>
+    
+    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
+
+    <p>Rebecca R. Bourgault, Martin C. Rabenhorst. 2011. 
+Genesis and characterization of manganiferous soils in the 
+Eastern Piedmont, USA. Geoderma. 165:84-94.</p>
+    
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples">  <span class="co"># setup environment</span>
+  <span class="fu">library</span>(<span class="no">aqp</span>)
+  <span class="fu">data</span>(<span class="no">sp6</span>)
+
+  <span class="co"># init SPC</span>
+  <span class="fu">depths</span>(<span class="no">sp6</span>) <span class="kw">&lt;-</span> <span class="no">id</span> ~ <span class="no">top</span> + <span class="no">bottom</span>
+  <span class="co"># convert non-standard Munsell colors</span>
+  <span class="no">sp6</span>$<span class="no">soil_color</span> <span class="kw">&lt;-</span> <span class="fu"><a href="munsell2rgb.html">getClosestMunsellChip</a></span>(<span class="no">sp6</span>$<span class="no">color</span>)
+
+  <span class="co"># profile sketches</span>
+  <span class="fu">par</span>(<span class="kw">mar</span><span class="kw">=</span><span class="fu">c</span>(<span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">3</span>,<span class="fl">0</span>))
+  <span class="fu"><a href="SoilProfileCollection-plotting-methods.html">plot</a></span>(<span class="no">sp6</span>, <span class="kw">color</span><span class="kw">=</span><span class="st">'soil_color'</span>)
+  <span class="fu"><a href="SoilProfileCollection-plotting-methods.html">plot</a></span>(<span class="no">sp6</span>, <span class="kw">color</span><span class="kw">=</span><span class="st">'Mn'</span>)
+  <span class="fu"><a href="SoilProfileCollection-plotting-methods.html">plot</a></span>(<span class="no">sp6</span>, <span class="kw">color</span><span class="kw">=</span><span class="st">'Fe'</span>)
+  <span class="fu"><a href="SoilProfileCollection-plotting-methods.html">plot</a></span>(<span class="no">sp6</span>, <span class="kw">color</span><span class="kw">=</span><span class="st">'pH'</span>)
+  <span class="fu"><a href="SoilProfileCollection-plotting-methods.html">plot</a></span>(<span class="no">sp6</span>, <span class="kw">color</span><span class="kw">=</span><span class="st">'texture'</span>)</pre>
+  </div>
+  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+    <h2>Contents</h2>
+    <ul class="nav nav-pills nav-stacked">
+      
+      <li><a href="#format">Format</a></li>
+
+      <li><a href="#details">Details</a></li>
+
+      <li><a href="#source">Source</a></li>
+
+      <li><a href="#references">References</a></li>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
+
+  </div>
+</div>
+
+      

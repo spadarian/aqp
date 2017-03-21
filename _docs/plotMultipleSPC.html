@@ -1,0 +1,95 @@
+---
+layout: doc
+title: "Plot Multiple SoilProfileCollection Objects — plotMultipleSPC"
+aqp_version: 1.10-1
+date: 2017-03-20 17:34:41 
+scripts: [jquery.sticky-kit.min.js, pkgdown.js]
+---
+
+<div class="row">
+  <div class="col-md-9 contents">
+    <div class="page-header">
+    <h1>Plot Multiple SoilProfileCollection Objects</h1>
+    </div>
+
+    
+    <p>Combine multiple SoilProfilecollection objects into a single profile sketch, with annotated groups.</p>
+    
+
+    <pre><span class="fu">plotMultipleSPC</span>(<span class="no">spc.list</span>, <span class="no">group.labels</span>,
+<span class="kw">args</span> <span class="kw">=</span> <span class="fu">rep</span>(<span class="fu">list</span>(<span class="fl">NA</span>), <span class="kw">times</span><span class="kw">=</span><span class="fu">length</span>(<span class="no">spc.list</span>)),
+<span class="kw">arrow.offset</span> <span class="kw">=</span> <span class="fl">2</span>, <span class="kw">bracket.base.depth</span> <span class="kw">=</span> <span class="fl">95</span>,
+<span class="no">...</span>)</pre>
+    
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
+    <dl class="dl-horizontal">
+      <dt>spc.list</dt>
+      <dd>a list of <code>SoilProfileCollection</code> objects</dd>
+      <dt>group.labels</dt>
+      <dd>a vector of group labels, one for each <code>SoilProfileCollection</code> object</dd>
+      <dt>args</dt>
+      <dd>a list of arguments passed to <code>plotSPC</code>, one for each <code>SoilProfileCollection</code> object</dd>
+      <dt>arrow.offset</dt>
+      <dd>vertical offset in depth from base of start / end profiles and group bracket arrows</dd>
+      <dt>bracket.base.depth</dt>
+      <dd>baseline depth used for group brackets</dd>
+      <dt>&#8230;</dt>
+      <dd>additional arguments to the first call to <code>plotSPC</code></dd>
+    </dl>
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>See examples below for usage.</p>
+    
+    <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
+
+    <p>Multiple color legends for thematic profile sketches are not currently supported, use with caution.</p>
+    
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <p><code><a href="profileGroupLabels.html">profileGroupLabels</a></code></p>
+    
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><span class="co"># load sample data</span>
+<span class="fu">data</span>(<span class="no">sp3</span>)
+<span class="fu">data</span>(<span class="no">sp4</span>)
+
+<span class="co"># convert soil colors</span>
+<span class="no">sp3</span>$<span class="no">h</span> <span class="kw">&lt;-</span> <span class="fl">NA</span> ; <span class="no">sp3</span>$<span class="no">s</span> <span class="kw">&lt;-</span> <span class="fl">NA</span> ; <span class="no">sp3</span>$<span class="no">v</span> <span class="kw">&lt;-</span> <span class="fl">NA</span>
+<span class="no">sp3.rgb</span> <span class="kw">&lt;-</span> <span class="fu">with</span>(<span class="no">sp3</span>, <span class="fu"><a href="munsell2rgb.html">munsell2rgb</a></span>(<span class="no">hue</span>, <span class="no">value</span>, <span class="no">chroma</span>, <span class="kw">return_triplets</span><span class="kw">=</span><span class="fl">TRUE</span>))
+<span class="no">sp3</span>[, <span class="fu">c</span>(<span class="st">'h'</span>,<span class="st">'s'</span>,<span class="st">'v'</span>)] <span class="kw">&lt;-</span> <span class="fu">t</span>(<span class="fu">with</span>(<span class="no">sp3.rgb</span>, <span class="fu">rgb2hsv</span>(<span class="no">r</span>, <span class="no">g</span>, <span class="no">b</span>, <span class="kw">maxColorValue</span><span class="kw">=</span><span class="fl">1</span>)))
+
+<span class="co"># promote to SoilProfileCollection</span>
+<span class="fu">depths</span>(<span class="no">sp3</span>) <span class="kw">&lt;-</span> <span class="no">id</span> ~ <span class="no">top</span> + <span class="no">bottom</span>
+<span class="fu">depths</span>(<span class="no">sp4</span>) <span class="kw">&lt;-</span> <span class="no">id</span> ~ <span class="no">top</span> + <span class="no">bottom</span>
+
+<span class="co"># combine into a list</span>
+<span class="no">spc.list</span> <span class="kw">&lt;-</span> <span class="fu">list</span>(<span class="no">sp3</span>, <span class="no">sp4</span>)
+
+<span class="co"># plot multiple SPC objects, with list of named arguments for each call to plotSPC</span>
+<span class="fu">par</span>(<span class="kw">mar</span><span class="kw">=</span><span class="fu">c</span>(<span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">3</span>,<span class="fl">3</span>))
+<span class="fu">plotMultipleSPC</span>(<span class="no">spc.list</span>, <span class="kw">group.labels</span><span class="kw">=</span><span class="fu">c</span>(<span class="st">'Collection 1'</span>, <span class="st">'Collection 2'</span>),
+<span class="kw">args</span><span class="kw">=</span><span class="fu">list</span>(<span class="fu">list</span>(<span class="kw">name</span><span class="kw">=</span><span class="st">'name'</span>, <span class="kw">id.style</span><span class="kw">=</span><span class="st">'top'</span>),
+<span class="fu">list</span>(<span class="kw">name</span><span class="kw">=</span><span class="st">'name'</span>, <span class="kw">id.style</span><span class="kw">=</span><span class="st">'side'</span>)), <span class="kw">bracket.base.depth</span><span class="kw">=</span><span class="fl">120</span>)</pre>
+  </div>
+  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+    <h2>Contents</h2>
+    <ul class="nav nav-pills nav-stacked">
+      <li><a href="#arguments">Arguments</a></li>
+      
+      <li><a href="#details">Details</a></li>
+
+      <li><a href="#note">Note</a></li>
+
+      <li><a href="#see-also">See also</a></li>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
+
+    <h2>Author</h2>
+    D.E. Beaudette and Ben Marshall
+  </div>
+</div>
+
+      

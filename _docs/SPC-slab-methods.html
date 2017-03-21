@@ -1,0 +1,307 @@
+---
+layout: doc
+title: "Slab-Wise Aggregation of SoilProfileCollection Objects — slab-methods"
+aqp_version: 1.10-1
+date: 2017-03-20 17:34:41 
+scripts: [jquery.sticky-kit.min.js, pkgdown.js]
+---
+
+<div class="row">
+  <div class="col-md-9 contents">
+    <div class="page-header">
+    <h1>Slab-Wise Aggregation of SoilProfileCollection Objects</h1>
+    </div>
+
+    
+    <p>Aggregate soil properties along user-defined `slabs`, and optionally within groups.</p>
+    
+
+    <pre><span class="co"># method for SoilProfileCollection objects</span>
+<span class="fu">slab</span>(<span class="no">object</span>, <span class="no">fm</span>, <span class="kw">slab.structure</span><span class="kw">=</span><span class="fl">1</span>, <span class="kw">strict</span><span class="kw">=</span><span class="fl">FALSE</span>,
+<span class="kw">slab.fun</span><span class="kw">=</span><span class="no">.slab.fun.numeric.default</span>, <span class="kw">cpm</span><span class="kw">=</span><span class="fl">1</span>, <span class="kw">weights</span><span class="kw">=</span><span class="kw">NULL</span>, <span class="no">...</span>)</pre>
+    
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
+    <dl class="dl-horizontal">
+      <dt>object</dt>
+      <dd>a SoilProfileCollection</dd>
+      <dt>fm</dt>
+      <dd>A formula: either `groups ~ var1 + var2 + var3' where named variables are aggregated within `groups' OR where named variables are aggregated across the entire collection ` ~ var1 + var2 + var3'. If `groups` is a factor it must not contain NA.</dd>
+      <dt>slab.structure</dt>
+      <dd>A user-defined slab thickness (defined by an integer), or user-defined structure (numeric vector). See details below.</dd>
+      <dt>strict</dt>
+      <dd>logical: should horizons be strictly checked for self-consistency?</dd>
+      <dt>slab.fun</dt>
+      <dd>Function used to process each 'slab' of data, ideally returning a vector with names attribute. Defaults to a wrapper function around <code>hdquantile</code>. See details.</dd>
+      <dt>cpm</dt>
+      <dd>Strategy for normalizing slice-wise probabilities, dividing by either: number of profiles with data at the current slice (cpm=1), or by the number of profiles in the collection (cpm=2). Mode 1 values will always sum to the contributing fraction, while mode 2 values will always sum to 1.</dd>
+      <dt>weights</dt>
+      <dd>Column name containing weights. NOT YET IMPLEMENTED</dd>
+      <dt>&#8230;</dt>
+      <dd>further arguments passsed to <code>slab.fun</code></dd>
+    </dl>
+    
+    <h2 class="hasAnchor" id="methods"><a class="anchor" href="#methods"></a>Methods</h2>
+
+    <p></p><dl class="dl-horizontal">
+<dt>data = "SoilProfileCollection"</dt><dd>Typical usage, where input is a <code><a href="SoilProfileCollection-class.html">SoilProfileCollection</a></code>.</dd>
+</dl>
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>Multiple continuous variables OR a single categorical (factor) variable can be aggregated within a call to <code>slab</code>. Basic error checking is performed to make sure that top and bottom horizon boundaries make sense. User-defined aggregate functions (<code>slab.fun</code>) should return a named vector of results. A new, named column will appear in the results of <code>slab</code> for every named element of a vector returned by <code>slab.fun</code>. See examples below for a simple example of a slab function that computes mean, mean-1SD and mean+1SD. The default slab function wraps <code>hdquantile</code> from the Hmisc package, which requires at least 2 observations per chunk. Note that if `group` is a factor it must not contain NAs.</p>
+    <p>Execution time scales linearly (slower) with the total number of profiles in <code>object</code>, and exponentially (faster) as the number of profiles / group is increased. <code>slab()</code> and <code>slice()</code> are much faster and require less memory if input data are either numeric or character.</p>
+    <p>There are several possible ways to define slabs, using <code>slab.structure</code>:</p>
+    <p></p><dl class="dl-horizontal">
+	<dt>a single integer</dt><dd>e.g. 10: data are aggregated over a regular sequence of 10-unit thickness slabs</dd>
+	<dt>a vector of 2 integers</dt><dd>e.g. c(50, 60): data are aggregated over depths spanning 50--60 units</dd>
+	<dt>a vector of 3 or more integers</dt><dd>e.g. c(0, 5, 10, 50, 100): data are aggregated over the depths spanning 0--5, 5--10, 10--50, 50--100 units</dd>
+	</dl>
+    
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>Output is returned in long format, such that slice-wise aggregates are returned once for each combination of grouping level (optional), variable described in the <code>fm</code> argument, and depth-wise 'slab'.</p>
+    <p>Aggregation of numeric variables, using the default slab function:
+	</p><dl class="dl-horizontal">
+		<dt>variable</dt><dd>The names of variables included in the call to <code>slab</code>.</dd>
+		<dt>groupname</dt><dd>The name of the grouping variable when provided, otherwise a fake grouping variable named 'all.profiles'.</dd>
+		<dt>p.q5</dt><dd>The slice-wise 5th percentile.</dd>
+		<dt>p.q25</dt><dd>The slice-wise 25th percentile</dd>
+		<dt>p.q50</dt><dd>The slice-wise 50th percentile (median)</dd>
+		<dt>p.q75</dt><dd>The slice-wise 75th percentile</dd>
+		<dt>p.q95</dt><dd>The slice-wise 95th percentile</dd>
+		<dt>top</dt><dd>The slab top boundary.</dd>
+		<dt>bottom</dt><dd>The slab bottom boundary.</dd>
+		<dt>contributing_fraction</dt><dd>The fraction of profiles contributing to the aggregate value, ranges from 1/n_profiles to 1.</dd>
+		</dl>
+    <p>When a single factor variable is used, slice-wise probabilities for each level of that factor are returned as:
+	</p><dl class="dl-horizontal">
+		<dt>variable</dt><dd>The names of variables included in the call to <code>slab</code>.</dd>
+		<dt>groupname</dt><dd>The name of the grouping variable when provided, otherwise a fake grouping variable named 'all.profiles'.</dd>
+		<dt>A</dt><dd>The slice-wise probability of level A</dd>
+		<dt>B</dt><dd>The slice-wise probability of level B</dd>
+		<dt>&#8230;</dt><dd></dd>
+		<dt>n</dt><dd>The slice-wise probability of level n</dd>
+		<dt>top</dt><dd>The slab top boundary.</dd>
+		<dt>bottom</dt><dd>The slab bottom boundary.</dd>
+		<dt>contributing_fraction</dt><dd>The fraction of profiles contributing to the aggregate value, ranges from 1/n_profiles to 1.</dd>
+    <p></p></dl>
+    
+    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
+
+    <p>D.E. Beaudette, P. Roudier, A.T. O'Geen, Algorithms for quantitative pedology: A toolkit for soil scientists, Computers &amp; Geosciences, Volume 52, March 2013, Pages 258-268, 10.1016/j.cageo.2012.10.020.</p>
+    <p>Harrell FE, Davis CE (1982): A new distribution-free quantile estimator. Biometrika 69:635-640.</p>
+    
+    <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
+
+    <p>Arguments to <code>slab</code> have changed with <code>aqp</code> 1.5 (2012-12-29) as part of a code clean-up and optimization. Calculation of weighted-summaries was broken in <code>aqp</code> 1.2-6 (2012-06-26), and removed as of <code>aqp</code> 1.5 (2012-12-29).  <code>slab</code> replaced the previously defined <code>soil.slot.multiple</code> function as of <code>aqp</code> 0.98-8.58 (2011-12-21).</p>
+    
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <p><code><a href="slice-methods.html">slice</a>, hdquantile</code></p>
+    
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><span class="co">##</span>
+<span class="co">## basic examples</span>
+<span class="co">##</span>
+<span class="fu">library</span>(<span class="no">lattice</span>)
+<span class="fu">library</span>(<span class="no">grid</span>)
+
+<span class="co"># load sample data, upgrade to SoilProfileCollection</span>
+<span class="fu">data</span>(<span class="no">sp1</span>)
+<span class="fu">depths</span>(<span class="no">sp1</span>) <span class="kw">&lt;-</span> <span class="no">id</span> ~ <span class="no">top</span> + <span class="no">bottom</span>
+
+<span class="co"># aggregate entire collection with two different segment sizes</span>
+<span class="no">a</span> <span class="kw">&lt;-</span> <span class="fu">slab</span>(<span class="no">sp1</span>, <span class="kw">fm</span> <span class="kw">=</span> ~ <span class="no">prop</span>)
+<span class="no">b</span> <span class="kw">&lt;-</span> <span class="fu">slab</span>(<span class="no">sp1</span>, <span class="kw">fm</span> <span class="kw">=</span> ~ <span class="no">prop</span>, <span class="kw">slab.structure</span><span class="kw">=</span><span class="fl">5</span>)
+
+<span class="co"># check output</span>
+<span class="fu">str</span>(<span class="no">a</span>)
+
+<span class="co"># stack into long format</span>
+<span class="no">ab</span> <span class="kw">&lt;-</span> <span class="fu">make.groups</span>(<span class="no">a</span>, <span class="no">b</span>)
+<span class="no">ab</span>$<span class="no">which</span> <span class="kw">&lt;-</span> <span class="fu">factor</span>(<span class="no">ab</span>$<span class="no">which</span>, <span class="kw">levels</span><span class="kw">=</span><span class="fu">c</span>(<span class="st">'a'</span>,<span class="st">'b'</span>),
+<span class="kw">labels</span><span class="kw">=</span><span class="fu">c</span>(<span class="st">'1-cm Interval'</span>, <span class="st">'5-cm Interval'</span>))
+
+<span class="co"># plot median and IQR</span>
+<span class="co"># custom plotting function for uncertainty viz.</span>
+<span class="fu">xyplot</span>(<span class="no">top</span> ~ <span class="no">p.q50</span> <span class="kw">|</span> <span class="no">which</span>, <span class="kw">data</span><span class="kw">=</span><span class="no">ab</span>, <span class="kw">ylab</span><span class="kw">=</span><span class="st">'Depth'</span>,
+                         <span class="kw">xlab</span><span class="kw">=</span><span class="st">'median bounded by 25th and 75th percentiles'</span>,
+                         <span class="kw">lower</span><span class="kw">=</span><span class="no">ab</span>$<span class="no">p.q25</span>, <span class="kw">upper</span><span class="kw">=</span><span class="no">ab</span>$<span class="no">p.q75</span>, <span class="kw">ylim</span><span class="kw">=</span><span class="fu">c</span>(<span class="fl">250</span>,-<span class="fl">5</span>),
+                         <span class="kw">panel</span><span class="kw">=</span><span class="no">panel.depth_function</span>,
+                         <span class="kw">prepanel</span><span class="kw">=</span><span class="no">prepanel.depth_function</span>,
+                         <span class="kw">cf</span><span class="kw">=</span><span class="no">ab</span>$<span class="no">contributing_fraction</span>,
+                         <span class="kw">layout</span><span class="kw">=</span><span class="fu">c</span>(<span class="fl">2</span>,<span class="fl">1</span>), <span class="kw">scales</span><span class="kw">=</span><span class="fu">list</span>(<span class="kw">x</span><span class="kw">=</span><span class="fu">list</span>(<span class="kw">alternating</span><span class="kw">=</span><span class="fl">1</span>))
+                         )
+
+
+<span class="co">##</span>
+<span class="co">## categorical variable example</span>
+<span class="co">##</span>
+<span class="fu">library</span>(<span class="no">reshape</span>)
+
+<span class="co"># normalize horizon names: result is a factor</span>
+<span class="no">sp1</span>$<span class="no">name</span> <span class="kw">&lt;-</span> <span class="fu"><a href="generalize.hz.html">generalize.hz</a></span>(<span class="no">sp1</span>$<span class="no">name</span>,
+<span class="kw">new</span><span class="kw">=</span><span class="fu">c</span>(<span class="st">'O'</span>,<span class="st">'A'</span>,<span class="st">'B'</span>,<span class="st">'C'</span>),
+<span class="kw">pat</span><span class="kw">=</span><span class="fu">c</span>(<span class="st">'O'</span>, <span class="st">'^A'</span>,<span class="st">'^B'</span>,<span class="st">'C'</span>))
+
+<span class="co"># compute slice-wise probability so that it sums to contributing fraction, from 0-150</span>
+<span class="no">a</span> <span class="kw">&lt;-</span> <span class="fu">slab</span>(<span class="no">sp1</span>, <span class="kw">fm</span><span class="kw">=</span> ~ <span class="no">name</span>, <span class="kw">cpm</span><span class="kw">=</span><span class="fl">1</span>, <span class="kw">slab.structure</span><span class="kw">=</span><span class="fl">0</span>:<span class="fl">150</span>)
+
+<span class="co"># reshape into long format for plotting</span>
+<span class="no">a.long</span> <span class="kw">&lt;-</span> <span class="fu">melt</span>(<span class="no">a</span>, <span class="kw">id.vars</span><span class="kw">=</span><span class="fu">c</span>(<span class="st">'top'</span>,<span class="st">'bottom'</span>), <span class="kw">measure.vars</span><span class="kw">=</span><span class="fu">c</span>(<span class="st">'O'</span>,<span class="st">'A'</span>,<span class="st">'B'</span>,<span class="st">'C'</span>))
+
+<span class="co"># plot horizon type proportions using panels</span>
+<span class="fu">xyplot</span>(<span class="no">top</span> ~ <span class="no">value</span> <span class="kw">|</span> <span class="no">variable</span>, <span class="kw">data</span><span class="kw">=</span><span class="no">a.long</span>, <span class="kw">subset</span><span class="kw">=</span><span class="no">value</span> <span class="kw">&gt;</span> <span class="fl">0</span>,
+                         <span class="kw">ylim</span><span class="kw">=</span><span class="fu">c</span>(<span class="fl">150</span>, -<span class="fl">5</span>), <span class="kw">type</span><span class="kw">=</span><span class="fu">c</span>(<span class="st">'S'</span>,<span class="st">'g'</span>), <span class="kw">horizontal</span><span class="kw">=</span><span class="fl">TRUE</span>, <span class="kw">layout</span><span class="kw">=</span><span class="fu">c</span>(<span class="fl">4</span>,<span class="fl">1</span>), <span class="kw">col</span><span class="kw">=</span><span class="fl">1</span> )
+
+<span class="co"># again, this time using groups</span>
+<span class="fu">xyplot</span>(<span class="no">top</span> ~ <span class="no">value</span>, <span class="kw">data</span><span class="kw">=</span><span class="no">a.long</span>, <span class="kw">groups</span><span class="kw">=</span><span class="no">variable</span>, <span class="kw">subset</span><span class="kw">=</span><span class="no">value</span> <span class="kw">&gt;</span> <span class="fl">0</span>,
+                         <span class="kw">ylim</span><span class="kw">=</span><span class="fu">c</span>(<span class="fl">150</span>, -<span class="fl">5</span>), <span class="kw">type</span><span class="kw">=</span><span class="fu">c</span>(<span class="st">'S'</span>,<span class="st">'g'</span>), <span class="kw">horizontal</span><span class="kw">=</span><span class="fl">TRUE</span>, <span class="kw">asp</span><span class="kw">=</span><span class="fl">2</span>)
+
+<span class="co"># adjust probability to size of collection, from 0-150</span>
+<span class="no">a.1</span> <span class="kw">&lt;-</span> <span class="fu">slab</span>(<span class="no">sp1</span>, <span class="kw">fm</span><span class="kw">=</span> ~ <span class="no">name</span>, <span class="kw">cpm</span><span class="kw">=</span><span class="fl">2</span>, <span class="kw">slab.structure</span><span class="kw">=</span><span class="fl">0</span>:<span class="fl">150</span>)
+
+<span class="co"># reshape into long format for plotting</span>
+<span class="no">a.1.long</span> <span class="kw">&lt;-</span> <span class="fu">melt</span>(<span class="no">a.1</span>, <span class="kw">id.vars</span><span class="kw">=</span><span class="fu">c</span>(<span class="st">'top'</span>,<span class="st">'bottom'</span>), <span class="kw">measure.vars</span><span class="kw">=</span><span class="fu">c</span>(<span class="st">'O'</span>,<span class="st">'A'</span>,<span class="st">'B'</span>,<span class="st">'C'</span>))
+
+<span class="co"># combine aggregation from `cpm` modes 1 and 2</span>
+<span class="no">g</span> <span class="kw">&lt;-</span> <span class="fu">make.groups</span>(<span class="kw">cmp.mode.1</span><span class="kw">=</span><span class="no">a.long</span>, <span class="kw">cmp.mode.2</span><span class="kw">=</span><span class="no">a.1.long</span>)
+
+<span class="co"># plot horizon type proportions</span>
+<span class="fu">xyplot</span>(<span class="no">top</span> ~ <span class="no">value</span> <span class="kw">|</span> <span class="no">variable</span>, <span class="kw">groups</span><span class="kw">=</span><span class="no">which</span>, <span class="kw">data</span><span class="kw">=</span><span class="no">g</span>, <span class="kw">subset</span><span class="kw">=</span><span class="no">value</span> <span class="kw">&gt;</span> <span class="fl">0</span>,
+                         <span class="kw">ylim</span><span class="kw">=</span><span class="fu">c</span>(<span class="fl">240</span>, -<span class="fl">5</span>), <span class="kw">type</span><span class="kw">=</span><span class="fu">c</span>(<span class="st">'S'</span>,<span class="st">'g'</span>), <span class="kw">horizontal</span><span class="kw">=</span><span class="fl">TRUE</span>, <span class="kw">layout</span><span class="kw">=</span><span class="fu">c</span>(<span class="fl">4</span>,<span class="fl">1</span>),
+                         <span class="kw">auto.key</span><span class="kw">=</span><span class="fu">list</span>(<span class="kw">lines</span><span class="kw">=</span><span class="fl">TRUE</span>, <span class="kw">points</span><span class="kw">=</span><span class="fl">FALSE</span>, <span class="kw">columns</span><span class="kw">=</span><span class="fl">2</span>),
+                         <span class="kw">par.settings</span><span class="kw">=</span><span class="fu">list</span>(<span class="kw">superpose.line</span><span class="kw">=</span><span class="fu">list</span>(<span class="kw">col</span><span class="kw">=</span><span class="fu">c</span>(<span class="fl">1</span>,<span class="fl">2</span>))),
+       <span class="kw">scales</span><span class="kw">=</span><span class="fu">list</span>(<span class="kw">alternating</span><span class="kw">=</span><span class="fl">3</span>))
+
+
+<span class="co"># apply slice-wise evaluation of max probability, and assign ML-horizon at each slice</span>
+(<span class="no">gen.hz.ml</span> <span class="kw">&lt;-</span> <span class="fu"><a href="get.ml.hz.html">get.ml.hz</a></span>(<span class="no">a</span>, <span class="fu">c</span>(<span class="st">'O'</span>,<span class="st">'A'</span>,<span class="st">'B'</span>,<span class="st">'C'</span>)))
+
+<span class="co">## Not run: ------------------------------------</span>
+<span class="co"># ##</span>
+<span class="co"># ## multivariate examples</span>
+<span class="co"># ##</span>
+<span class="co"># data(sp3)</span>
+<span class="co"># </span>
+<span class="co"># # add new grouping factor</span>
+<span class="co"># sp3$group &lt;- 'group 1'</span>
+<span class="co"># sp3$group[as.numeric(sp3$id) &gt; 5] &lt;- 'group 2'</span>
+<span class="co"># sp3$group &lt;- factor(sp3$group)</span>
+<span class="co"># </span>
+<span class="co"># # upgrade to SPC</span>
+<span class="co"># depths(sp3) &lt;- id ~ top + bottom</span>
+<span class="co"># site(sp3) &lt;- ~ group</span>
+<span class="co"># </span>
+<span class="co"># # custom 'slab' function, returning mean +/- 1SD</span>
+<span class="co"># mean.and.sd &lt;- function(values) {</span>
+<span class="co"># 	m &lt;- mean(values, na.rm=TRUE)</span>
+<span class="co"># 	s &lt;- sd(values, na.rm=TRUE)</span>
+<span class="co"># 	upper &lt;- m + s</span>
+<span class="co"># 	lower &lt;- m - s</span>
+<span class="co"># 	res &lt;- c(mean=m, lower=lower, upper=upper)</span>
+<span class="co"># 	return(res)</span>
+<span class="co"># 	}</span>
+<span class="co"># </span>
+<span class="co"># # aggregate several variables at once, within 'group'</span>
+<span class="co"># a &lt;- slab(sp3, fm=group ~ L + A + B, slab.fun=mean.and.sd)</span>
+<span class="co"># </span>
+<span class="co"># # check the results:</span>
+<span class="co"># # note that 'group' is the column containing group labels</span>
+<span class="co"># library(lattice)</span>
+<span class="co"># xyplot(</span>
+<span class="co"># 	top ~ mean | variable, data=a, groups=group,</span>
+<span class="co"># 	lower=a$lower, upper=a$upper, sync.colors=TRUE, alpha=0.5,</span>
+<span class="co"># 	cf=a$contributing_fraction,</span>
+<span class="co"># 	ylim=c(125,-5), layout=c(3,1), scales=list(x=list(relation='free')),</span>
+<span class="co"># 	par.settings=list(superpose.line=list(lwd=2, col=c('RoyalBlue', 'Orange2'))),</span>
+<span class="co"># 	panel=panel.depth_function, </span>
+<span class="co"># 	prepanel=prepanel.depth_function,</span>
+<span class="co"># 	auto.key=list(columns=2, lines=TRUE, points=FALSE)</span>
+<span class="co"># )</span>
+<span class="co"># </span>
+<span class="co"># </span>
+<span class="co"># # compare a single profile to the group-level aggregate values</span>
+<span class="co"># a.1 &lt;- slab(sp3[1, ], fm=group ~ L + A + B, slab.fun=mean.and.sd)</span>
+<span class="co"># </span>
+<span class="co"># # manually update the group column</span>
+<span class="co"># a.1$group &lt;- 'profile 1'</span>
+<span class="co"># </span>
+<span class="co"># # combine into a single data.frame:</span>
+<span class="co"># g &lt;- rbind(a, a.1)</span>
+<span class="co"># </span>
+<span class="co"># # plot with customized line styles</span>
+<span class="co"># xyplot(</span>
+<span class="co"># 	top ~ mean | variable, data=g, groups=group, subscripts=TRUE, </span>
+<span class="co"># 	lower=a$lower, upper=a$upper, ylim=c(125,-5),</span>
+<span class="co"># 	layout=c(3,1), scales=list(x=list(relation='free')),</span>
+<span class="co"># 	panel=panel.depth_function, </span>
+<span class="co"># 	prepanel=prepanel.depth_function,</span>
+<span class="co"># 	sync.colors=TRUE, alpha=0.25,</span>
+<span class="co"># 	par.settings=list(superpose.line=list(col=c('orange', 'royalblue', 'black'), </span>
+<span class="co">#   lwd=2, lty=c(1,1,2))),</span>
+<span class="co"># 	auto.key=list(columns=3, lines=TRUE, points=FALSE)</span>
+<span class="co"># )</span>
+<span class="co"># </span>
+<span class="co"># </span>
+<span class="co"># </span>
+<span class="co"># ## convert mean value for each variable into long format</span>
+<span class="co"># library(reshape)</span>
+<span class="co"># </span>
+<span class="co"># # note that depths are no longer in order </span>
+<span class="co"># a.wide &lt;- cast(a, group + top + bottom ~ variable, value=c('mean'))</span>
+<span class="co"># </span>
+<span class="co"># ## again, this time for a user-defined slab from 40-60 cm</span>
+<span class="co"># a &lt;- slab(sp3, fm=group ~ L + A + B, slab.structure=c(40,60), slab.fun=mean.and.sd)</span>
+<span class="co"># </span>
+<span class="co"># # now we have weighted average properties (within the defined slab)</span>
+<span class="co"># # for each variable, and each group</span>
+<span class="co"># (a.wide &lt;- cast(a, group + top + bottom ~ variable, value=c('mean')))</span>
+<span class="co"># </span>
+<span class="co"># ## this time, compute the weighted mean of selected properties, by profile ID</span>
+<span class="co"># a &lt;- slab(sp3, fm= id ~ L + A + B, slab.structure=c(40,60), slab.fun=mean.and.sd)</span>
+<span class="co"># (a.wide &lt;- cast(a, id + top + bottom ~ variable, value=c('mean')))</span>
+<span class="co"># </span>
+<span class="co"># </span>
+<span class="co"># ## aggregate the entire collection, using default slab function (hdquantile)</span>
+<span class="co"># ## note the missing left-hand side of the formula</span>
+<span class="co"># a &lt;- slab(sp3, fm= ~ L + A + B)</span>
+<span class="co"># </span>
+<span class="co"># </span>
+<span class="co"># ## weighted-aggregation -- NOT YET IMPLEMENTED --</span>
+<span class="co"># # load sample data, upgrade to SoilProfileCollection</span>
+<span class="co"># data(sp1)</span>
+<span class="co"># depths(sp1) &lt;- id ~ top + bottom</span>
+<span class="co"># </span>
+<span class="co"># # generate pretend weights as site-level attribute</span>
+<span class="co"># set.seed(10101)</span>
+<span class="co"># sp1$site.wts &lt;- runif(n=length(sp1), min=20, max=100)</span>
+<span class="co">## ---------------------------------------------</span></pre>
+  </div>
+  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+    <h2>Contents</h2>
+    <ul class="nav nav-pills nav-stacked">
+      <li><a href="#arguments">Arguments</a></li>
+      
+      <li><a href="#methods">Methods</a></li>
+
+      <li><a href="#details">Details</a></li>
+
+      <li><a href="#value">Value</a></li>
+
+      <li><a href="#references">References</a></li>
+
+      <li><a href="#note">Note</a></li>
+
+      <li><a href="#see-also">See also</a></li>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
+
+    <h2>Author</h2>
+    D.E. Beaudette
+  </div>
+</div>
+
+      

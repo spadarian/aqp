@@ -1,0 +1,155 @@
+---
+layout: doc
+title: "Random Profile — random_profile"
+aqp_version: 1.10-1
+date: 2017-03-20 17:34:41 
+scripts: [jquery.sticky-kit.min.js, pkgdown.js]
+---
+
+<div class="row">
+  <div class="col-md-9 contents">
+    <div class="page-header">
+    <h1>Random Profile</h1>
+    </div>
+
+    
+    <p>Generate a random soil profile according to set criteria, with correlated depth trends.</p>
+    
+
+    <pre><span class="fu">random_profile</span>(<span class="no">id</span>, <span class="kw">n</span> <span class="kw">=</span> <span class="fu">c</span>(<span class="fl">3</span>, <span class="fl">4</span>, <span class="fl">5</span>, <span class="fl">6</span>), <span class="kw">min_thick</span> <span class="kw">=</span> <span class="fl">5</span>,
+ <span class="kw">max_thick</span> <span class="kw">=</span> <span class="fl">30</span>, <span class="kw">n_prop</span> <span class="kw">=</span> <span class="fl">5</span>, <span class="kw">exact</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="kw">method</span> <span class="kw">=</span> <span class="st">'random_walk'</span>,
+ <span class="kw">HzDistinctSim</span><span class="kw">=</span><span class="fl">FALSE</span>, <span class="no">...</span>)</pre>
+    
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
+    <dl class="dl-horizontal">
+      <dt>id</dt>
+      <dd>a character or numeric id used for this profile</dd>
+      <dt>n</dt>
+      <dd>vector of possible number of horizons, or the exact number of horizons (see below)</dd>
+      <dt>min_thick</dt>
+      <dd>minimum thickness criteria for a simulated horizon</dd>
+      <dt>max_thick</dt>
+      <dd>maximum thickness criteria for a simulated horizon</dd>
+      <dt>n_prop</dt>
+      <dd>number of simulated soil properties (columns in the returned dataframe)</dd>
+      <dt>exact</dt>
+      <dd>should the exact number of requested horizons be generated? (defaults to FALSE)</dd>
+      <dt>method</dt>
+      <dd>named method used to synthesize depth function ('random_walk' or 'LPP'), see details</dd>
+      <dt>HzDistinctSim</dt>
+      <dd>optionally simulate horizon boundary distinctness codes</dd>
+      <dt>&#8230;</dt>
+      <dd>additional parameters passed-in to the LPP (<code>.lpp</code>) function</dd>
+    </dl>
+    
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>A dataframe with the simulated profile.</p>
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>The random walk method produces profiles with considerable variation between horizons and is based on values from the normal distribution seeded with means and standard deviations drawn from the uniform distribtion of [0, 10].</p>
+    <p>The logistic power peak (LPP) function can be used to generate random soil property depth functions that are sharply peaked. LPP parameters can be hard-coded using the optional arguments: "lpp.a", "lpp.b", "lpp.u", "lpp.d", "lpp.e". Amplitude of the peak is controlled by ("lpp.a + "lpp.b"), depth of the peak by "lpp.u", and abruptness by "lpp.d" and "lpp.e". Further description of the method is outlined in (Brenton et al, 2011). Simulated horizon distinctness codes are based on the USDA-NCSS field description methods (<a href="http://www.nrcs.usda.gov/wps/portal/nrcs/detail//?cid=nrcs142p2_054184">http://www.nrcs.usda.gov/wps/portal/nrcs/detail//?cid=nrcs142p2_054184</a>). Simulated distinctness codes are constrained according to horizon thickness, i.e. a gradual boundary (+/- 5cm) will not be simulated for horizons that are thinner than 3x this vertical distance</p>
+    
+    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
+
+    <p>Myers, D. B.; Kitchen, N. R.; Sudduth, K. A.; Miles, R. J.; Sadler, E. J. &amp; Grunwald, S. Peak functions for modeling high resolution soil profile data Geoderma, 2011, 166, 74-83.</p>
+    
+    <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
+
+    <p>See examples for ideas on simulating several profiles at once.</p>
+    
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <p><code><a href="profile_compare-methods.html">profile_compare</a>, <a href="hzDistinctnessCodeToOffset.html">hzDistinctnessCodeToOffset</a></code></p>
+    
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><span class="co"># generate 10 random profiles with default settings:</span>
+<span class="fu">require</span>(<span class="no">plyr</span>)
+<span class="no">d</span> <span class="kw">&lt;-</span> <span class="fu">ldply</span>(<span class="fl">1</span>:<span class="fl">10</span>, <span class="no">random_profile</span>)
+
+<span class="co"># add a fake color</span>
+<span class="no">d</span>$<span class="no">soil_color</span> <span class="kw">&lt;-</span> <span class="st">'white'</span>
+
+<span class="co"># promote to SoilProfileCollection and plot</span>
+<span class="fu">depths</span>(<span class="no">d</span>) <span class="kw">&lt;-</span> <span class="no">id</span> ~ <span class="no">top</span> + <span class="no">bottom</span>
+<span class="fu"><a href="SoilProfileCollection-plotting-methods.html">plot</a></span>(<span class="no">d</span>)
+
+
+<span class="co"># simulate horizon boundary distinctness codes:</span>
+<span class="no">d</span> <span class="kw">&lt;-</span> <span class="fu">ldply</span>(<span class="fl">1</span>:<span class="fl">10</span>, <span class="no">random_profile</span>, <span class="kw">HzDistinctSim</span><span class="kw">=</span><span class="fl">TRUE</span>)
+<span class="no">d</span>$<span class="no">soil_color</span> <span class="kw">&lt;-</span> <span class="fu">grey</span>(<span class="fl">0.85</span>)
+<span class="fu">depths</span>(<span class="no">d</span>) <span class="kw">&lt;-</span> <span class="no">id</span> ~ <span class="no">top</span> + <span class="no">bottom</span>
+<span class="no">d</span>$<span class="no">HzD</span> <span class="kw">&lt;-</span> <span class="fu"><a href="hzDistinctnessCodeToOffset.html">hzDistinctnessCodeToOffset</a></span>(<span class="no">d</span>$<span class="no">HzDistinctCode</span>)
+<span class="fu"><a href="SoilProfileCollection-plotting-methods.html">plot</a></span>(<span class="no">d</span>, <span class="kw">hz.distinctness.offset</span><span class="kw">=</span><span class="st">'HzD'</span>)
+
+
+
+<span class="co"># depth functions are generated using the LPP function</span>
+<span class="no">opar</span> <span class="kw">&lt;-</span> <span class="fu">par</span>(<span class="kw">mfrow</span><span class="kw">=</span><span class="fu">c</span>(<span class="fl">2</span>,<span class="fl">1</span>), <span class="kw">mar</span><span class="kw">=</span><span class="fu">c</span>(<span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">3</span>,<span class="fl">0</span>))
+<span class="co"># generate data</span>
+<span class="no">d</span> <span class="kw">&lt;-</span> <span class="fu">ldply</span>(<span class="fl">1</span>:<span class="fl">10</span>, <span class="no">random_profile</span>, <span class="kw">n</span><span class="kw">=</span><span class="fu">c</span>(<span class="fl">6</span>, <span class="fl">7</span>, <span class="fl">8</span>), <span class="kw">n_prop</span><span class="kw">=</span><span class="fl">1</span>, <span class="kw">method</span><span class="kw">=</span><span class="st">'LPP'</span>)
+
+<span class="co"># promote to SPC and plot</span>
+<span class="fu">depths</span>(<span class="no">d</span>) <span class="kw">&lt;-</span> <span class="no">id</span> ~ <span class="no">top</span> + <span class="no">bottom</span>
+<span class="fu"><a href="SoilProfileCollection-plotting-methods.html">plot</a></span>(<span class="no">d</span>, <span class="kw">color</span><span class="kw">=</span><span class="st">'p1'</span>)
+
+<span class="co"># do this again, this time set all of the LPP parameters</span>
+<span class="no">d</span> <span class="kw">&lt;-</span> <span class="fu">ldply</span>(<span class="fl">1</span>:<span class="fl">10</span>, <span class="no">random_profile</span>, <span class="kw">n</span><span class="kw">=</span><span class="fu">c</span>(<span class="fl">6</span>, <span class="fl">7</span>, <span class="fl">8</span>), <span class="kw">n_prop</span><span class="kw">=</span><span class="fl">1</span>, <span class="kw">method</span><span class="kw">=</span><span class="st">'LPP'</span>,
+<span class="kw">lpp.a</span><span class="kw">=</span><span class="fl">5</span>, <span class="kw">lpp.b</span><span class="kw">=</span><span class="fl">10</span>, <span class="kw">lpp.d</span><span class="kw">=</span><span class="fl">5</span>, <span class="kw">lpp.e</span><span class="kw">=</span><span class="fl">5</span>, <span class="kw">lpp.u</span><span class="kw">=</span><span class="fl">25</span>)
+
+<span class="fu">depths</span>(<span class="no">d</span>) <span class="kw">&lt;-</span> <span class="no">id</span> ~ <span class="no">top</span> + <span class="no">bottom</span>
+<span class="fu"><a href="SoilProfileCollection-plotting-methods.html">plot</a></span>(<span class="no">d</span>, <span class="kw">color</span><span class="kw">=</span><span class="st">'p1'</span>)
+
+<span class="co"># reset plotting defaults</span>
+<span class="fu">par</span>(<span class="no">opar</span>)
+
+
+
+<span class="co"># try plotting the LPP-derived simulated data</span>
+<span class="co"># aggregated over all profiles</span>
+<span class="no">a</span> <span class="kw">&lt;-</span> <span class="fu"><a href="slab-methods.html">slab</a></span>(<span class="no">d</span>, <span class="kw">fm</span><span class="kw">=</span> ~ <span class="no">p1</span>)
+<span class="no">a</span>$<span class="no">mid</span> <span class="kw">&lt;-</span> <span class="fu">with</span>(<span class="no">a</span>, (<span class="no">top</span> + <span class="no">bottom</span>) / <span class="fl">2</span>)
+
+<span class="fu">library</span>(<span class="no">lattice</span>)
+(<span class="no">p1</span> <span class="kw">&lt;-</span> <span class="fu">xyplot</span>(<span class="no">mid</span> ~ <span class="no">p.q50</span>, <span class="kw">data</span><span class="kw">=</span><span class="no">a</span>,
+<span class="kw">lower</span><span class="kw">=</span><span class="no">a</span>$<span class="no">p.q25</span>, <span class="kw">upper</span><span class="kw">=</span><span class="no">a</span>$<span class="no">p.q75</span>, <span class="kw">ylim</span><span class="kw">=</span><span class="fu">c</span>(<span class="fl">150</span>,-<span class="fl">5</span>), <span class="kw">alpha</span><span class="kw">=</span><span class="fl">0.5</span>,
+<span class="kw">panel</span><span class="kw">=</span><span class="no">panel.depth_function</span>, <span class="kw">prepanel</span><span class="kw">=</span><span class="no">prepanel.depth_function</span>,
+<span class="kw">cf</span><span class="kw">=</span><span class="no">a</span>$<span class="no">contributing_fraction</span>, <span class="kw">xlab</span><span class="kw">=</span><span class="st">'Simulated Data'</span>, <span class="kw">ylab</span><span class="kw">=</span><span class="st">'Depth'</span>,
+<span class="kw">main</span><span class="kw">=</span><span class="st">'LPP(a=5, b=10, d=5, e=5, u=25)'</span>,
+<span class="kw">par.settings</span><span class="kw">=</span><span class="fu">list</span>(<span class="kw">superpose.line</span><span class="kw">=</span><span class="fu">list</span>(<span class="kw">col</span><span class="kw">=</span><span class="st">'black'</span>, <span class="kw">lwd</span><span class="kw">=</span><span class="fl">2</span>))
+))
+
+<span class="co"># optionally add original data as step-functions</span>
+<span class="kw">if</span>(<span class="fu">require</span>(<span class="no">latticeExtra</span>)) {
+  <span class="no">h</span> <span class="kw">&lt;-</span> <span class="fu"><a href="SPC-utils.html">horizons</a></span>(<span class="no">d</span>)
+  <span class="no">p1</span> + <span class="fu">as.layer</span>(<span class="fu">xyplot</span>(<span class="no">top</span> ~ <span class="no">p1</span>, <span class="kw">groups</span><span class="kw">=</span><span class="no">id</span>, <span class="kw">data</span><span class="kw">=</span><span class="no">h</span>,
+  <span class="kw">horizontal</span><span class="kw">=</span><span class="fl">TRUE</span>, <span class="kw">type</span><span class="kw">=</span><span class="st">'S'</span>,
+  <span class="kw">par.settings</span><span class="kw">=</span><span class="fu">list</span>(<span class="kw">superpose.line</span><span class="kw">=</span><span class="fu">list</span>(<span class="kw">col</span><span class="kw">=</span><span class="st">'blue'</span>, <span class="kw">lwd</span><span class="kw">=</span><span class="fl">1</span>, <span class="kw">lty</span><span class="kw">=</span><span class="fl">2</span>))))
+  }</pre>
+  </div>
+  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+    <h2>Contents</h2>
+    <ul class="nav nav-pills nav-stacked">
+      <li><a href="#arguments">Arguments</a></li>
+      
+      <li><a href="#value">Value</a></li>
+
+      <li><a href="#details">Details</a></li>
+
+      <li><a href="#references">References</a></li>
+
+      <li><a href="#note">Note</a></li>
+
+      <li><a href="#see-also">See also</a></li>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
+
+    <h2>Author</h2>
+    Dylan E. Beaudette
+  </div>
+</div>
+
+      

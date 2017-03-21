@@ -1,0 +1,195 @@
+---
+layout: doc
+title: "Sample Soil Database #5 — sp5"
+aqp_version: 1.10-1
+date: 2017-03-20 17:34:41 
+scripts: [jquery.sticky-kit.min.js, pkgdown.js]
+---
+
+<div class="row">
+  <div class="col-md-9 contents">
+    <div class="page-header">
+    <h1>Sample Soil Database #5</h1>
+    </div>
+
+    
+    <p>296 Soil Profiles from the La Rochelle region of France (F. Carre and Girard, 2002)</p>
+    
+
+    <pre><span class="fu">data</span>(<span class="no">sp5</span>)</pre>
+        
+    <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
+
+    <p></p><pre> 
+Formal class 'SoilProfileCollection' [package "aqp"] with 6 slots
+  ..@ idcol    : chr "soil"
+  ..@ depthcols: chr [1:2] "top" "bottom"
+  ..@ metadata :'data.frame':	1 obs. of  1 variable:
+  .. ..$ depth_units: chr "cm"
+  ..@ horizons :'data.frame':	1539 obs. of  17 variables:
+  .. ..$ soil      : soil ID
+  .. ..$ sand      : sand
+  .. ..$ silt      : silt
+  .. ..$ clay      : clay
+  .. ..$ R25       : RGB r-coordinate
+  .. ..$ G25       : RGB g-coordinate
+  .. ..$ B25       : RGB b-coordinate
+  .. ..$ pH        : pH
+  .. ..$ EC        : EC
+  .. ..$ CaCO3     : CaC03 content
+  .. ..$ C         : C content
+  .. ..$ Ca        : Ca
+  .. ..$ Mg        : Mg
+  .. ..$ Na        : Na
+  .. ..$ top       : horizon top boundary (cm)
+  .. ..$ bottom    : horizon bottom boundary (cm)
+  .. ..$ soil_color: soil color in r-friendly format
+  ..@ site      :'data.frame':  296 obs. of  1 variable:
+  .. ..$ soil: chr [1:296] "soil1" "soil10" "soil100" "soil101" ...
+  ..@ sp       :Formal class 'SpatialPoints' [package "sp"] with 3 slots
+  .. .. ..@ coords     : num [1, 1] 0
+  .. .. ..@ bbox       : logi [1, 1] NA
+  .. .. ..@ proj4string:Formal class 'CRS' [package "sp"] with 1 slots
+  .. .. .. .. ..@ projargs: chr NA
+</pre>
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>These data are c/o F. Carre (Florence.CARRE@ineris.fr).</p>
+    
+    <h2 class="hasAnchor" id="source"><a class="anchor" href="#source"></a>Source</h2>
+
+    <p>296 Soil Profiles from the La Rochelle region of France (F. Carre and Girard, 2002). These data can be found on the OSACA project page (<a href="http://eusoils.jrc.ec.europa.eu/projects/OSACA/">http://eusoils.jrc.ec.europa.eu/projects/OSACA/</a>).</p>
+    
+    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
+
+    <p>F. Carre, M.C. Girard. 2002. Quantitative mapping of soil types based on regression kriging of taxonomic distances with landform and land cover attributes. Geoderma. 110: 241--263.</p>
+    
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><span class="fu">library</span>(<span class="no">scales</span>)
+<span class="fu">data</span>(<span class="no">sp5</span>)
+<span class="fu">par</span>(<span class="kw">mar</span><span class="kw">=</span><span class="fu">c</span>(<span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">1</span>))
+<span class="co"># plot a random sampling of profiles</span>
+<span class="no">s</span> <span class="kw">&lt;-</span> <span class="fu">sample</span>(<span class="fl">1</span>:<span class="fu">length</span>(<span class="no">sp5</span>), <span class="kw">size</span><span class="kw">=</span><span class="fl">25</span>)
+<span class="fu"><a href="SoilProfileCollection-plotting-methods.html">plot</a></span>(<span class="no">sp5</span>[<span class="no">s</span>, ], <span class="kw">divide.hz</span><span class="kw">=</span><span class="fl">FALSE</span>)
+
+<span class="co"># plot the first 100 profiles, as 4 rows of 25, hard-coding the max depth</span>
+<span class="fu">layout</span>(<span class="fu">matrix</span>(<span class="fu">c</span>(<span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">3</span>,<span class="fl">4</span>), <span class="kw">ncol</span><span class="kw">=</span><span class="fl">1</span>), <span class="kw">height</span><span class="kw">=</span><span class="fu">c</span>(<span class="fl">0.25</span>,<span class="fl">0.25</span>,<span class="fl">0.25</span>,<span class="fl">0.25</span>))
+<span class="fu"><a href="SoilProfileCollection-plotting-methods.html">plot</a></span>(<span class="no">sp5</span>[<span class="fl">1</span>:<span class="fl">25</span>, ], <span class="kw">max.depth</span><span class="kw">=</span><span class="fl">300</span>)
+<span class="fu"><a href="SoilProfileCollection-plotting-methods.html">plot</a></span>(<span class="no">sp5</span>[<span class="fl">26</span>:<span class="fl">50</span>, ], <span class="kw">max.depth</span><span class="kw">=</span><span class="fl">300</span>)
+<span class="fu"><a href="SoilProfileCollection-plotting-methods.html">plot</a></span>(<span class="no">sp5</span>[<span class="fl">51</span>:<span class="fl">75</span>, ], <span class="kw">max.depth</span><span class="kw">=</span><span class="fl">300</span>)
+<span class="fu"><a href="SoilProfileCollection-plotting-methods.html">plot</a></span>(<span class="no">sp5</span>[<span class="fl">76</span>:<span class="fl">100</span>, ], <span class="kw">max.depth</span><span class="kw">=</span><span class="fl">300</span>)
+
+
+<span class="co"># 4x1 matrix of plotting areas</span>
+<span class="fu">layout</span>(<span class="fu">matrix</span>(<span class="fu">c</span>(<span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">3</span>,<span class="fl">4</span>), <span class="kw">ncol</span><span class="kw">=</span><span class="fl">1</span>), <span class="kw">height</span><span class="kw">=</span><span class="fu">c</span>(<span class="fl">0.25</span>,<span class="fl">0.25</span>,<span class="fl">0.25</span>,<span class="fl">0.25</span>))
+
+<span class="co"># plot profiles, with points added to the mid-points of randomly selected horizons</span>
+<span class="no">sub</span> <span class="kw">&lt;-</span> <span class="no">sp5</span>[<span class="fl">1</span>:<span class="fl">25</span>, ]
+<span class="fu"><a href="SoilProfileCollection-plotting-methods.html">plot</a></span>(<span class="no">sub</span>, <span class="kw">max.depth</span><span class="kw">=</span><span class="fl">300</span>) ; <span class="fu">mtext</span>(<span class="st">'Set 1'</span>, <span class="fl">2</span>, <span class="kw">line</span><span class="kw">=</span>-<span class="fl">0.5</span>, <span class="kw">font</span><span class="kw">=</span><span class="fl">2</span>)
+<span class="no">y.p</span> <span class="kw">&lt;-</span> <span class="fu"><a href="profileApply-methods.html">profileApply</a></span>(<span class="no">sub</span>, <span class="kw">function</span>(<span class="no">x</span>) {
+  <span class="no">s</span> <span class="kw">&lt;-</span> <span class="fu">sample</span>(<span class="fl">1</span>:<span class="fu">nrow</span>(<span class="no">x</span>), <span class="fl">1</span>)
+  <span class="no">h</span> <span class="kw">&lt;-</span> <span class="fu"><a href="SPC-utils.html">horizons</a></span>(<span class="no">x</span>); <span class="fu">with</span>(<span class="no">h</span>[<span class="no">s</span>,], (<span class="no">top</span>+<span class="no">bottom</span>)/<span class="fl">2</span>)
+  })
+<span class="fu">points</span>(<span class="fl">1</span>:<span class="fl">25</span>, <span class="no">y.p</span>, <span class="kw">bg</span><span class="kw">=</span><span class="st">'white'</span>, <span class="kw">pch</span><span class="kw">=</span><span class="fl">21</span>)
+
+<span class="co"># plot profiles, with arrows pointing to profile bottoms</span>
+<span class="no">sub</span> <span class="kw">&lt;-</span> <span class="no">sp5</span>[<span class="fl">26</span>:<span class="fl">50</span>, ]
+<span class="fu"><a href="SoilProfileCollection-plotting-methods.html">plot</a></span>(<span class="no">sub</span>, <span class="kw">max.depth</span><span class="kw">=</span><span class="fl">300</span>); <span class="fu">mtext</span>(<span class="st">'Set 2'</span>, <span class="fl">2</span>, <span class="kw">line</span><span class="kw">=</span>-<span class="fl">0.5</span>, <span class="kw">font</span><span class="kw">=</span><span class="fl">2</span>)
+<span class="no">y.a</span> <span class="kw">&lt;-</span> <span class="fu"><a href="profileApply-methods.html">profileApply</a></span>(<span class="no">sub</span>, <span class="kw">function</span>(<span class="no">x</span>) <span class="fu">max</span>(<span class="no">x</span>))
+<span class="fu">arrows</span>(<span class="fl">1</span>:<span class="fl">25</span>, <span class="no">y.a</span>-<span class="fl">50</span>, <span class="fl">1</span>:<span class="fl">25</span>, <span class="no">y.a</span>, <span class="kw">len</span><span class="kw">=</span><span class="fl">0.1</span>, <span class="kw">col</span><span class="kw">=</span><span class="st">'white'</span>)
+
+<span class="co"># plot profiles, with points connected by lines: ideally reflecting some kind of measured data</span>
+<span class="no">sub</span> <span class="kw">&lt;-</span> <span class="no">sp5</span>[<span class="fl">51</span>:<span class="fl">75</span>, ]
+<span class="fu"><a href="SoilProfileCollection-plotting-methods.html">plot</a></span>(<span class="no">sub</span>, <span class="kw">max.depth</span><span class="kw">=</span><span class="fl">300</span>); <span class="fu">mtext</span>(<span class="st">'Set 3'</span>, <span class="fl">2</span>, <span class="kw">line</span><span class="kw">=</span>-<span class="fl">0.5</span>, <span class="kw">font</span><span class="kw">=</span><span class="fl">2</span>)
+<span class="no">y.p</span> <span class="kw">&lt;-</span> <span class="fl">20</span>*(<span class="fu">sin</span>(<span class="fl">1</span>:<span class="fl">25</span>) + <span class="fl">2</span>*<span class="fu">cos</span>(<span class="fl">1</span>:<span class="fl">25</span>) + <span class="fl">5</span>)
+<span class="fu">points</span>(<span class="fl">1</span>:<span class="fl">25</span>, <span class="no">y.p</span>, <span class="kw">bg</span><span class="kw">=</span><span class="st">'white'</span>, <span class="kw">pch</span><span class="kw">=</span><span class="fl">21</span>)
+<span class="fu">lines</span>(<span class="fl">1</span>:<span class="fl">25</span>, <span class="no">y.p</span>, <span class="kw">lty</span><span class="kw">=</span><span class="fl">2</span>)
+
+<span class="co"># plot profiles, with polygons connecting horizons with max clay content (+/-) 10 cm</span>
+<span class="no">sub</span> <span class="kw">&lt;-</span> <span class="no">sp5</span>[<span class="fl">76</span>:<span class="fl">100</span>, ]
+<span class="no">y.clay.max</span> <span class="kw">&lt;-</span> <span class="fu"><a href="profileApply-methods.html">profileApply</a></span>(<span class="no">sub</span>, <span class="kw">function</span>(<span class="no">x</span>) {
+  <span class="no">i</span> <span class="kw">&lt;-</span> <span class="fu">which.max</span>(<span class="no">x</span>$<span class="no">clay</span>)
+  <span class="no">h</span> <span class="kw">&lt;-</span> <span class="fu"><a href="SPC-utils.html">horizons</a></span>(<span class="no">x</span>)
+  <span class="fu">with</span>(<span class="no">h</span>[<span class="no">i</span>, ], (<span class="no">top</span>+<span class="no">bottom</span>)/<span class="fl">2</span>)
+  } )
+
+<span class="fu"><a href="SoilProfileCollection-plotting-methods.html">plot</a></span>(<span class="no">sub</span>, <span class="kw">max.depth</span><span class="kw">=</span><span class="fl">300</span>); <span class="fu">mtext</span>(<span class="st">'Set 4'</span>, <span class="fl">2</span>, <span class="kw">line</span><span class="kw">=</span>-<span class="fl">0.5</span>, <span class="kw">font</span><span class="kw">=</span><span class="fl">2</span>)
+<span class="fu">polygon</span>(<span class="fu">c</span>(<span class="fl">1</span>:<span class="fl">25</span>, <span class="fl">25</span>:<span class="fl">1</span>), <span class="fu">c</span>(<span class="no">y.clay.max</span>-<span class="fl">10</span>, <span class="fu">rev</span>(<span class="no">y.clay.max</span>+<span class="fl">10</span>)),
+<span class="kw">border</span><span class="kw">=</span><span class="st">'black'</span>, <span class="kw">col</span><span class="kw">=</span><span class="fu">rgb</span>(<span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">0.8</span>, <span class="kw">alpha</span><span class="kw">=</span><span class="fl">0.25</span>))
+<span class="fu">points</span>(<span class="fl">1</span>:<span class="fl">25</span>, <span class="no">y.clay.max</span>, <span class="kw">pch</span><span class="kw">=</span><span class="fl">21</span>, <span class="kw">bg</span><span class="kw">=</span><span class="st">'white'</span>)
+
+<span class="co"># close plot</span>
+<span class="fu">dev.off</span>()
+
+
+<span class="co"># plotting parameters</span>
+<span class="no">yo</span> <span class="kw">&lt;-</span> <span class="fl">100</span> <span class="co"># y-offset</span>
+<span class="no">sf</span> <span class="kw">&lt;-</span> <span class="fl">0.65</span> <span class="co"># scaling factor</span>
+<span class="co"># plot profile sketches</span>
+<span class="fu">par</span>(<span class="kw">mar</span><span class="kw">=</span><span class="fu">c</span>(<span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">0</span>))
+<span class="fu"><a href="SoilProfileCollection-plotting-methods.html">plot</a></span>(<span class="no">sp5</span>[<span class="fl">1</span>:<span class="fl">25</span>, ], <span class="kw">max.depth</span><span class="kw">=</span><span class="fl">300</span>, <span class="kw">y.offset</span><span class="kw">=</span><span class="no">yo</span>, <span class="kw">scaling.factor</span><span class="kw">=</span><span class="no">sf</span>)
+<span class="co"># optionally add describe plotting area above profiles with lines</span>
+<span class="co"># abline(h=c(0,90,100, (300*sf)+yo), lty=2)</span>
+<span class="co"># simulate an environmental variable associated with profiles (elevation, etc.)</span>
+<span class="no">r</span> <span class="kw">&lt;-</span> <span class="fu">vector</span>(<span class="kw">mode</span><span class="kw">=</span><span class="st">'numeric'</span>, <span class="kw">length</span><span class="kw">=</span><span class="fl">25</span>)
+<span class="no">r</span>[<span class="fl">1</span>] <span class="kw">&lt;-</span> -<span class="fl">50</span> ; <span class="kw">for</span>(<span class="no">i</span> <span class="kw">in</span> <span class="fl">2</span>:<span class="fl">25</span>) {<span class="no">r</span>[<span class="no">i</span>] <span class="kw">&lt;-</span> <span class="no">r</span>[<span class="no">i</span>-<span class="fl">1</span>] + <span class="fu">rnorm</span>(<span class="kw">mean</span><span class="kw">=</span>-<span class="fl">1</span>, <span class="kw">sd</span><span class="kw">=</span><span class="fl">25</span>, <span class="kw">n</span><span class="kw">=</span><span class="fl">1</span>)}
+<span class="co"># rescale</span>
+<span class="no">r</span> <span class="kw">&lt;-</span> <span class="fu">rescale</span>(<span class="no">r</span>, <span class="kw">to</span><span class="kw">=</span><span class="fu">c</span>(<span class="fl">80</span>, <span class="fl">0</span>))
+<span class="co"># illustrate gradient with points/lines/arrows</span>
+<span class="fu">lines</span>(<span class="fl">1</span>:<span class="fl">25</span>, <span class="no">r</span>)
+<span class="fu">points</span>(<span class="fl">1</span>:<span class="fl">25</span>, <span class="no">r</span>, <span class="kw">pch</span><span class="kw">=</span><span class="fl">16</span>)
+<span class="fu">arrows</span>(<span class="fl">1</span>:<span class="fl">25</span>, <span class="no">r</span>, <span class="fl">1</span>:<span class="fl">25</span>, <span class="fl">95</span>, <span class="kw">len</span><span class="kw">=</span><span class="fl">0.1</span>)
+<span class="co"># add scale for simulated gradient</span>
+<span class="fu">axis</span>(<span class="fl">2</span>, <span class="kw">at</span><span class="kw">=</span><span class="fu">pretty</span>(<span class="fl">0</span>:<span class="fl">80</span>), <span class="kw">labels</span><span class="kw">=</span><span class="fu">rev</span>(<span class="fu">pretty</span>(<span class="fl">0</span>:<span class="fl">80</span>)), <span class="kw">line</span><span class="kw">=</span>-<span class="fl">1</span>, <span class="kw">cex.axis</span><span class="kw">=</span><span class="fl">0.75</span>, <span class="kw">las</span><span class="kw">=</span><span class="fl">2</span>)
+<span class="co"># depict a secondary environmental gradient with polygons (water table depth, etc.)</span>
+<span class="fu">polygon</span>(<span class="fu">c</span>(<span class="fl">1</span>:<span class="fl">25</span>, <span class="fl">25</span>:<span class="fl">1</span>), <span class="fu">c</span>((<span class="fl">100</span>-<span class="no">r</span>)+<span class="fl">150</span>, <span class="fu">rep</span>((<span class="fl">300</span>*<span class="no">sf</span>)+<span class="no">yo</span>, <span class="kw">times</span><span class="kw">=</span><span class="fl">25</span>)),
+<span class="kw">border</span><span class="kw">=</span><span class="st">'black'</span>, <span class="kw">col</span><span class="kw">=</span><span class="fu">rgb</span>(<span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">0.8</span>, <span class="kw">alpha</span><span class="kw">=</span><span class="fl">0.25</span>))
+
+
+<span class="co">##</span>
+<span class="co"># sample 25 profiles from the collection</span>
+<span class="no">s</span> <span class="kw">&lt;-</span> <span class="no">sp5</span>[<span class="fu">sample</span>(<span class="fl">1</span>:<span class="fu">length</span>(<span class="no">sp5</span>), <span class="kw">size</span><span class="kw">=</span><span class="fl">25</span>), ]
+<span class="co"># compute pair-wise dissimilarity</span>
+<span class="no">d</span> <span class="kw">&lt;-</span> <span class="fu"><a href="profile_compare-methods.html">profile_compare</a></span>(<span class="no">s</span>, <span class="kw">vars</span><span class="kw">=</span><span class="fu">c</span>(<span class="st">'R25'</span>,<span class="st">'pH'</span>,<span class="st">'clay'</span>,<span class="st">'EC'</span>), <span class="kw">k</span><span class="kw">=</span><span class="fl">0</span>,
+<span class="kw">replace_na</span><span class="kw">=</span><span class="fl">TRUE</span>, <span class="kw">add_soil_flag</span><span class="kw">=</span><span class="fl">TRUE</span>, <span class="kw">max_d</span><span class="kw">=</span><span class="fl">300</span>)
+<span class="co"># keep only the dissimilarity between profile 1 and all others</span>
+<span class="no">d.1</span> <span class="kw">&lt;-</span> <span class="fu">as.matrix</span>(<span class="no">d</span>)[<span class="fl">1</span>, ]
+<span class="co"># rescale dissimilarities</span>
+<span class="no">d.1</span> <span class="kw">&lt;-</span> <span class="fu">rescale</span>(<span class="no">d.1</span>, <span class="kw">to</span><span class="kw">=</span><span class="fu">c</span>(<span class="fl">80</span>, <span class="fl">0</span>))
+<span class="co"># sort in ascending order</span>
+<span class="no">d.1.order</span> <span class="kw">&lt;-</span> <span class="fu">rev</span>(<span class="fu">order</span>(<span class="no">d.1</span>))
+<span class="co"># plotting parameters</span>
+<span class="no">yo</span> <span class="kw">&lt;-</span> <span class="fl">100</span> <span class="co"># y-offset</span>
+<span class="no">sf</span> <span class="kw">&lt;-</span> <span class="fl">0.65</span> <span class="co"># scaling factor</span>
+<span class="co"># plot sketches</span>
+<span class="fu">par</span>(<span class="kw">mar</span><span class="kw">=</span><span class="fu">c</span>(<span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">0</span>))
+<span class="fu"><a href="SoilProfileCollection-plotting-methods.html">plot</a></span>(<span class="no">s</span>, <span class="kw">max.depth</span><span class="kw">=</span><span class="fl">300</span>, <span class="kw">y.offset</span><span class="kw">=</span><span class="no">yo</span>, <span class="kw">scaling.factor</span><span class="kw">=</span><span class="no">sf</span>, <span class="kw">plot.order</span><span class="kw">=</span><span class="no">d.1.order</span>)
+<span class="co"># add dissimilarity values with lines/points</span>
+<span class="fu">lines</span>(<span class="fl">1</span>:<span class="fl">25</span>, <span class="no">d.1</span>[<span class="no">d.1.order</span>])
+<span class="fu">points</span>(<span class="fl">1</span>:<span class="fl">25</span>, <span class="no">d.1</span>[<span class="no">d.1.order</span>], <span class="kw">pch</span><span class="kw">=</span><span class="fl">16</span>)
+<span class="co"># link dissimilarity values with profile sketches via arrows</span>
+<span class="fu">arrows</span>(<span class="fl">1</span>:<span class="fl">25</span>, <span class="no">d.1</span>[<span class="no">d.1.order</span>], <span class="fl">1</span>:<span class="fl">25</span>, <span class="fl">95</span>, <span class="kw">len</span><span class="kw">=</span><span class="fl">0.1</span>)
+<span class="co"># add an axis for the dissimilarity scale</span>
+<span class="fu">axis</span>(<span class="fl">2</span>, <span class="kw">at</span><span class="kw">=</span><span class="fu">pretty</span>(<span class="fl">0</span>:<span class="fl">80</span>), <span class="kw">labels</span><span class="kw">=</span><span class="fu">rev</span>(<span class="fu">pretty</span>(<span class="fl">0</span>:<span class="fl">80</span>)), <span class="kw">line</span><span class="kw">=</span>-<span class="fl">1</span>, <span class="kw">cex.axis</span><span class="kw">=</span><span class="fl">0.75</span>, <span class="kw">las</span><span class="kw">=</span><span class="fl">2</span>)</pre>
+  </div>
+  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+    <h2>Contents</h2>
+    <ul class="nav nav-pills nav-stacked">
+      
+      <li><a href="#format">Format</a></li>
+
+      <li><a href="#details">Details</a></li>
+
+      <li><a href="#source">Source</a></li>
+
+      <li><a href="#references">References</a></li>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
+
+  </div>
+</div>
+
+      

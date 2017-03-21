@@ -1,0 +1,78 @@
+---
+layout: doc
+title: "Generate Soil Depth Class Matrix — getSoilDepthClass"
+aqp_version: 1.10-1
+date: 2017-03-20 17:34:41 
+scripts: [jquery.sticky-kit.min.js, pkgdown.js]
+---
+
+<div class="row">
+  <div class="col-md-9 contents">
+    <div class="page-header">
+    <h1>Generate Soil Depth Class Matrix</h1>
+    </div>
+
+    
+    <p>Generate a boolean matrix of soil depth classes from a SoilProfileCollection object.</p>
+    
+
+    <pre><span class="fu">getSoilDepthClass</span>(<span class="no">f</span>, <span class="kw">depth.classes</span> <span class="kw">=</span> <span class="fu">c</span>(<span class="kw">very.shallow</span> <span class="kw">=</span> <span class="fl">25</span>,
+<span class="kw">shallow</span> <span class="kw">=</span> <span class="fl">50</span>, <span class="kw">mod.deep</span> <span class="kw">=</span> <span class="fl">100</span>, <span class="kw">deep</span> <span class="kw">=</span> <span class="fl">150</span>, <span class="kw">very.deep</span> <span class="kw">=</span> <span class="fl">1000</span>), <span class="no">...</span>)</pre>
+    
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
+    <dl class="dl-horizontal">
+      <dt>f</dt>
+      <dd>a SoilProfileCollection object</dd>
+      <dt>depth.classes</dt>
+      <dd>a named vector of classes and depth breaks</dd>
+      <dt>&#8230;</dt>
+      <dd>arguments passed to <code><a href="estimateSoilDepth.html">estimateSoilDepth</a></code></dd>
+    </dl>
+    
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>a <code>data.frame</code> containing soil depth and depth class for each profile, see examples</p>
+    
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <p><code><a href="estimateSoilDepth.html">estimateSoilDepth</a></code></p>
+    
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><span class="fu">data</span>(<span class="no">sp1</span>)
+<span class="fu">depths</span>(<span class="no">sp1</span>) <span class="kw">&lt;-</span> <span class="no">id</span> ~ <span class="no">top</span> + <span class="no">bottom</span>
+
+<span class="co"># generate depth-class matrix</span>
+<span class="no">sdc</span> <span class="kw">&lt;-</span> <span class="fu">getSoilDepthClass</span>(<span class="no">sp1</span>, <span class="kw">name</span><span class="kw">=</span><span class="st">'name'</span>, <span class="kw">top</span><span class="kw">=</span><span class="st">'top'</span>, <span class="kw">bottom</span><span class="kw">=</span><span class="st">'bottom'</span>)
+
+<span class="co"># inspect</span>
+<span class="fu">head</span>(<span class="no">sdc</span>)
+
+<span class="co"># join back into sp1 as site-level data</span>
+<span class="fu"><a href="SPC-utils.html">site</a></span>(<span class="no">sp1</span>) <span class="kw">&lt;-</span> <span class="no">sdc</span>
+
+<span class="co">## Not run: ------------------------------------</span>
+<span class="co"># # sample data</span>
+<span class="co"># data(gopheridge, package='soilDB')</span>
+<span class="co"># </span>
+<span class="co"># getSoilDepthClass(gopheridge)</span>
+<span class="co">## ---------------------------------------------</span></pre>
+  </div>
+  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+    <h2>Contents</h2>
+    <ul class="nav nav-pills nav-stacked">
+      <li><a href="#arguments">Arguments</a></li>
+      
+      <li><a href="#value">Value</a></li>
+
+      <li><a href="#see-also">See also</a></li>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
+
+    <h2>Author</h2>
+    D.E. Beaudette and J.M. Skovlin
+  </div>
+</div>
+
+      
